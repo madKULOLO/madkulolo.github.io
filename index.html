@@ -224,12 +224,53 @@
                 right: 10px;
             }
         }
+        
+        @media (orientation: landscape) and (max-width: 768px) {
+            .container {
+                margin-top: 20px;
+            }
+
+            .btn-group {
+                margin-top: 20px;
+            }
+
+            h1 {
+                font-size: 36px;
+                letter-spacing: 5px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            img {
+                margin: 10px auto;
+            }
+
+            .btn {
+                font-size: 18px;
+                padding: 10px 30px;
+                margin: 5px;
+            }
+
+            .btn-link {
+                font-size: 14px;
+                margin: 0 5px;
+            }
+
+            .popup-banner {
+                padding: 3px 6px;
+                font-size: 12px;
+                bottom: 5px;
+                right: 5px;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>не скупись с дедом денюжкой</h1>
+    <h1>не скупись с дедом ₽ $ € ₴ </h1>
     <h2>ДЕЛИСЬ</h2>
 
     <img src="/images/doby.jpg" alt="выбери уже">
@@ -249,7 +290,7 @@
 
 <div class="popup-banner" id="popupBanner">
     <a href="https://www.twitch.tv/madkulolo" target="_blank">ПоПаДи на СтИмЧик</a>
-    <a href="#" class="close-btn" onclick="closeBanner()">✖</a>
+    <a href="#" class="close-btn" onclick="closeBanner()">  ✖</a>
 </div>
 
 <script>
