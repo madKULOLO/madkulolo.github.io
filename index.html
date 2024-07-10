@@ -64,7 +64,7 @@
             margin: 20px;
             border-radius: 50px;
             box-shadow: 0 0 20px #0000ff;
-            transition: all 0.5s ease;
+            transition: all 0.3s ease; 
             font-family: 'Comic Sans MS', cursive;
         }
         .btn:hover {
@@ -72,7 +72,7 @@
             color: #00ff00;
             border-color: #00ffff;
             transform: rotate(10deg) scale(1.1);
-            box-shadow: 0 0 20px #ffff00, inset 0 0 10px #000000;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8); 
         }
         .btn-link {
             font-size: 24px;
@@ -87,7 +87,7 @@
         }
         
         h1 {
-            font-size: 96px;
+            font-size: 6rem; 
             text-transform: uppercase;
             letter-spacing: 30px;
             color: #ff0000;
@@ -114,6 +114,8 @@
         img {
             filter: drop-shadow(10px 10px 10px #000000);
             transform: rotate(10deg) scale(1.2);
+            max-width: 100%; 
+            height: auto; 
         }
 
         .btn-group {
@@ -154,6 +156,18 @@
             box-shadow: 0 0 20px #0000ff;
             z-index: 9999;
             display: block;
+            animation: popup 0.5s ease-in-out forwards; 
+        }
+
+        @keyframes popup {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         .popup-banner a {
@@ -167,7 +181,7 @@
         .popup-banner a:hover {
             color: #ff00ff;
             text-shadow: 2px 2px 5px #00ffff;
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(5deg); 
         }
 
         .popup-banner .close-btn {
@@ -192,7 +206,7 @@
             }
 
             h1 {
-                font-size: 48px;
+                font-size: 3rem; 
                 letter-spacing: 10px;
             }
 
@@ -203,7 +217,7 @@
 
             img {
                 margin: 20px auto;
-                max-width: 90%;
+                max-width: 90%; 
             }
 
             .btn {
