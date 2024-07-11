@@ -52,6 +52,9 @@
         .btn-group {
             text-align: center;
             margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .btn {
             font-size: 36px;
@@ -66,6 +69,8 @@
             box-shadow: 0 0 20px #0000ff;
             transition: all 0.3s ease; 
             font-family: 'Comic Sans MS', cursive;
+            max-width: 100%;
+            box-sizing: border-box;
         }
         .btn:hover {
             background-color: #ff00ff;
@@ -79,6 +84,7 @@
             color: #ff00ff;
             text-decoration: none;
             margin: 0 20px;
+            display: inline-block;
         }
         .btn-link:hover {
             color: #00ff00;
@@ -138,6 +144,8 @@
             text-decoration: none;
             margin: 0 15px;
             transition: all 0.5s ease;
+            display: inline-block;
+            width: auto;
         }
 
         .social-links a:hover {
@@ -224,11 +232,19 @@
                 font-size: 24px;
                 padding: 15px 40px;
                 margin: 10px;
+                width: calc(100% - 20px);
             }
 
             .btn-link {
                 font-size: 16px;
                 margin: 0 10px;
+                display: inline-block;
+            }
+
+            .social-links a {
+                font-size: 16px;
+                margin: 0 10px;
+                display: inline-block;
             }
 
             .popup-banner {
