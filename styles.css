@@ -1,0 +1,258 @@
+@font-face {
+    font-family: 'Comic Sans MS';
+    src: url('fonts/ComicSansMS.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Impact';
+    src: url('fonts/Impact.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Comic Sans MS', cursive;
+    background-color: #ffccff;
+    color: #ff00ff;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: #ffff00;
+    padding: 40px;
+    border: 10px dashed #00ff00;
+    border-radius: 50px;
+    box-shadow: 0 0 20px #ff0000;
+    position: relative;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #0000ff;
+    font-family: 'Impact', fantasy;
+    text-shadow: 2px 2px 5px #000000;
+}
+
+img {
+    display: block;
+    margin: 40px auto;
+    max-width: 100%;
+    border: 20px solid #00ffff;
+    border-radius: 20px;
+    box-shadow: 0 0 20px #ff00ff;
+}
+
+.btn-group {
+    text-align: center;
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn {
+    font-size: 36px;
+    padding: 20px 60px;
+    border: 8px double #ff00ff;
+    background-color: #00ff00;
+    color: #ff0000;
+    text-decoration: blink;
+    display: inline-block;
+    margin: 20px;
+    border-radius: 50px;
+    box-shadow: 0 0 20px #0000ff;
+    transition: all 0.3s ease;
+    font-family: 'Comic Sans MS', cursive;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.btn:hover {
+    background-color: #ff00ff;
+    color: #00ff00;
+    border-color: #00ffff;
+    transform: rotate(10deg) scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+.btn-link {
+    font-size: 24px;
+    color: #ff00ff;
+    text-decoration: none;
+    margin: 0 20px;
+    display: inline-block;
+}
+
+.btn-link:hover {
+    color: #00ff00;
+    text-shadow: 2px 2px 5px #000000;
+    transform: scale(1.2);
+}
+
+h1 {
+    font-size: 6rem;
+    text-transform: uppercase;
+    letter-spacing: 30px;
+    color: #ff0000;
+    text-shadow: 5px 5px 10px #00ffff;
+    animation: rainbow 3s infinite;
+}
+
+@keyframes rainbow {
+    0% { color: #ff0000; }
+    25% { color: #ff00ff; }
+    50% { color: #0000ff; }
+    75% { color: #00ffff; }
+    100% { color: #ff0000; }
+}
+
+h2 {
+    font-size: 54px;
+    font-style: italic;
+    text-decoration: line-through;
+    color: #00ff00;
+    text-shadow: 3px 3px 5px #000000;
+}
+
+img {
+    filter: drop-shadow(10px 10px 10px #000000);
+    transform: rotate(10deg) scale(1.2);
+    max-width: 100%;
+    height: auto;
+}
+
+.btn-group {
+    animation: shake 0.5s infinite alternate;
+}
+
+@keyframes shake {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(10deg); }
+}
+
+.social-links {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.social-links a {
+    font-size: 18px;
+    color: #0000ff;
+    text-decoration: none;
+    margin: 0 15px;
+    transition: all 0.5s ease;
+    display: inline-block;
+    width: auto;
+}
+
+.social-links a:hover {
+    transform: scale(1.2) rotate(360deg);
+    color: #ff00ff;
+}
+
+.popup-banner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 0, 0.8);
+    padding: 10px 20px;
+    border: 5px solid #ff00ff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #0000ff;
+    z-index: 9999;
+    display: block;
+    animation: popup 3.5s ease-in-out forwards;
+}
+
+@keyframes popup {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.popup-banner a {
+    font-size: 18px;
+    color: #0000ff;
+    text-decoration: none;
+    font-family: 'Comic Sans MS', cursive;
+    transition: all 0.3s ease;
+}
+
+.popup-banner a:hover {
+    color: #ff00ff;
+    text-shadow: 2px 2px 5px #00ffff;
+    transform: scale(1.1) rotate(5deg);
+}
+
+.popup-banner .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 24px;
+    color: #000000;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.popup-banner .close-btn:hover {
+    color: #ff0000;
+    transform: rotate(180deg);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 3rem;
+        letter-spacing: 10px;
+    }
+
+    h2 {
+        font-size: 36px;
+        text-decoration: none;
+    }
+
+    img {
+        margin: 20px auto;
+        max-width: 90%;
+    }
+
+    .btn {
+        font-size: 24px;
+        padding: 15px 40px;
+        margin: 10px;
+        width: calc(100% - 20px);
+    }
+
+    .btn-link {
+        font-size: 16px;
+        margin: 0 10px;
+        display: inline-block;
+    }
+
+    .social-links a {
+        font-size: 16px;
+        margin: 0 10px;
+        display: inline-block;
+    }
+
+    .popup-banner {
+        padding: 5px 10px;
+        font-size: 14px;
+        bottom: 10px;
+        right: 10px;
+    }
+}
