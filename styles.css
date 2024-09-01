@@ -255,4 +255,39 @@ img {
         bottom: 10px;
         right: 10px;
     }
+/* Стили для командной страницы */
+    .command {
+        cursor: pointer;
+        color: #ff6347;
+        font-weight: bold;
+    }
+
+    .commands-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .command-category {
+        flex: 1;
+        min-width: 250px;
+        max-width: 400px;
+        background: #2b2b2b;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+
+    .command-category h3 {
+        color: #ff6347;
+    }
+
+    .command-category ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .command-category li {
+        margin-bottom: 10px;
+    }
 }
