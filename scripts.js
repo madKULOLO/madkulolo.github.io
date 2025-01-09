@@ -4,6 +4,14 @@ function copyToClipboard(text) {
     });
 }
 
+function updateBackButton(event) {
+    event.preventDefault();
+    checkStreamStatus().then(() => {
+        const backButton = document.getElementById("backToHome");
+        window.location.href = backButton.href;
+    });
+}
+
 async function checkStreamStatus() {
     const channelName = "madkulolo";
     const clientId = "kimne78kx3ncx6brgo4mv6wki5h1ko"; 
@@ -15,11 +23,17 @@ async function checkStreamStatus() {
         });
         const data = await response.json();
         const isLive = data.data && data.data.length > 0;
-        const streamLink = document.getElementById("popupBanner");
+        const backButton = document.getElementById("backToHome");
+        const backText = document.getElementById("backText");
+
         if (isLive) {
-            streamLink.style.display = "block"; 
+            backButton.href = "https://www.twitch.tv/madkulolo";
+            backText.textContent = "🔴Назад к Деду на Стрим";
+            backButton.style.backgroundColor = "#ff0000";
         } else {
-            streamLink.style.display = "none"; 
+            backButton.href = "index.html";
+            backText.textContent = "Назад к Деду";
+            backButton.style.backgroundColor = "#ff4545";
         }
     } catch (error) {
         console.error("Failed to fetch stream status:", error);
