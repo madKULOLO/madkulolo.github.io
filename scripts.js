@@ -13,7 +13,7 @@ function updateBackButton(event) {
 }
 
 async function checkStreamStatus() {
-    const channelName = "deflixnps";
+    const channelName = "madkulolo";
     const clientId = "gp762nuuoqcoxypju8c569th9wz7q5"; 
     const accessToken = "nicnpw2xfm36f0fewnz1dtzww9i3hj"; 
 
