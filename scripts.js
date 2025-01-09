@@ -14,7 +14,7 @@ function updateBackButton(event) {
 
 async function checkStreamStatus() {
     const channelName = "madkulolo";
-    const clientId = "kimne78kx3ncx6brgo4mv6wki5h1ko"; 
+    const clientId = "rxpyer5hlnh3u28kxu3mtgx5eg0ylw"; 
     try {
         const response = await fetch(`https://api.twitch.tv/helix/streams?user_login=${channelName}`, {
             headers: {
