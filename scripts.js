@@ -13,7 +13,7 @@ function updateBackButton(event) {
 }
 
 async function checkStreamStatus() {
-    const channelName = "madkulolo";
+    const channelName = "Fibi_ch";
     const clientId = "kimne78kx3ncx6brgo4mv6wki5h1ko"; 
     try {
         const response = await fetch(`https://api.twitch.tv/helix/streams?user_login=${channelName}`, {
