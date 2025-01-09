@@ -28,11 +28,11 @@ async function checkStreamStatus() {
 
         if (isLive) {
             backButton.href = "https://www.twitch.tv/madkulolo";
-            backText.textContent = "🔴Назад к Деду на Стрим";
+            backText.textContent = "🔴Назад к Деду на стрим";
             backButton.style.backgroundColor = "#ff0000";
         } else {
-            backButton.href = "index.html";
-            backText.textContent = "Назад к Деду";
+            backButton.href = "/";
+            backText.textContent = "Назад к Деду 🏥";
             backButton.style.backgroundColor = "#ff4545";
         }
     } catch (error) {
