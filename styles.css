@@ -345,3 +345,37 @@ img {
     transform: scale(1.05);
     box-shadow: 0 0 30px #ff0000;
 }
+
+
+.back-to-home.active {
+    background-color: #00ff00;
+    color: #ff00ff;
+    border: 8px double #ff00ff;
+    transform: scale(1.1) rotate(10deg);
+}
+
+.popup-banner.active {
+    background-color: rgba(0, 255, 255, 0.8);
+    border-color: #ff0000;
+    transform: scale(1.1);
+}
+
+.popup-banner.inactive {
+    background-color: rgba(255, 0, 0, 0.8);
+    border-color: #0000ff;
+    transform: scale(0.9);
+}
+
+.popup-banner.inactive .close-btn {
+    color: #ff0000;
+}
+
+.back-to-home.active:hover {
+    background-color: #ff00ff;
+    color: #00ff00;
+}
+
+.popup-banner.active .close-btn:hover {
+    color: #00ff00;
+    transform: rotate(360deg);
+}
