@@ -28,26 +28,32 @@ async function checkStreamStatus() {
         const isLive = data.data && data.data.length > 0;
         const backButton = document.getElementById("backToHome");
         const backText = document.getElementById("backText");
+        const popupBanner = document.getElementById("popupBanner");
 
-        if (isLive) {
-            backButton.href = "https://www.twitch.tv/madkulolo";
-            backText.textContent = "🔴Назад к Деду на стрим";
-            backButton.style.backgroundColor = "#ff0000";
-        } else {
-            backButton.href = "/";
-            backText.textContent = "Назад к Деду домой 🏥";
-            backButton.style.backgroundColor = "#ff4545";
+        if (backButton && backText) { 
+            if (isLive) {
+                backButton.href = "https://www.twitch.tv/madkulolo";
+                backText.textContent = "🔴Назад к Деду на стрим";
+                backButton.style.backgroundColor = "#ff0000";
+            } else {
+                backButton.href = "/";
+                backText.textContent = "Назад к Деду домой 🏥";
+                backButton.style.backgroundColor = "#ff4545";
+            }
         }
 
-        const popupBanner = document.getElementById("popupBanner");
-        if (isLive) {
-            popupBanner.style.display = "block";
+        if (popupBanner) { 
+            if (isLive) {
+                popupBanner.style.display = "block";
+            } else {
+                popupBanner.style.display = "none";
+            }
         } else {
-            popupBanner.style.display = "none";
+            console.error('Popup banner element not found');
         }
 
     } catch (error) {
-        console.error("Failed to fetch stream status:", error);
+        console.error("Не удалось получить статус стрима:", error);
     }
 }
 
