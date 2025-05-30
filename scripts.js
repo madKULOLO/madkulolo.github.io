@@ -14,14 +14,14 @@ function updateBackButton(event) {
 
 async function checkStreamStatus() {
     const channelName = "madkulolo";
-    const clientId = "gp762nuuoqcoxypju8c569th9wz7q5"; 
-    const accessToken = "nicnpw2xfm36f0fewnz1dtzww9i3hj"; 
+    const clientId = "gp762nuuoqcoxypju8c569th9wz7q5";
+    const accessToken = "nicnpw2xfm36f0fewnz1dtzww9i3hj";
 
     try {
         const response = await fetch(`https://api.twitch.tv/helix/streams?user_login=${channelName}`, {
             headers: {
                 'Client-ID': clientId,
-                'Authorization': `Bearer ${accessToken}` 
+                'Authorization': `Bearer ${accessToken}`
             }
         });
         const data = await response.json();
@@ -30,7 +30,7 @@ async function checkStreamStatus() {
         const backText = document.getElementById("backText");
         const popupBanner = document.getElementById("popupBanner");
 
-        if (backButton && backText) { 
+        if (backButton && backText) {
             if (isLive) {
                 backButton.href = "https://www.twitch.tv/madkulolo";
                 backText.textContent = "🔴Назад к Деду на стрим";
@@ -42,7 +42,7 @@ async function checkStreamStatus() {
             }
         }
 
-        if (popupBanner) { 
+        if (popupBanner) {
             if (isLive) {
                 popupBanner.style.display = "block";
             } else {
@@ -51,7 +51,6 @@ async function checkStreamStatus() {
         } else {
             console.error('Popup banner element not found');
         }
-
     } catch (error) {
         console.error("Не удалось получить статус стрима:", error);
     }
