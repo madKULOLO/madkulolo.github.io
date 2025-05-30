@@ -14,39 +14,36 @@
     <meta name="author" content="madKULOLO">
     <link rel="shortcut icon" href="/images/logo.png" />
     <link rel="stylesheet" href="styles.css">
+    <!-- зачем ты сюда полез? Тут всё итак красиво, ЭТО ДИЗАЙН ТЫ НЕ ШАРИШЬ ПРСТ! -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <div class="loading-overlay">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">ДЕД ГРУЗИТСЯ, ПОГОДИ, БРО! 🚀</p>
+
+<div class="container">
+    <h1>С ДЕДОМ<br />НЕ СКУФИСЬ</h1>
+    <h2>ПОДЕЛИСЬ</h2>
+
+    <img src="/images/money.webp" alt="выбери уже">
+
+    <div class="btn-group">
+        <a class="btn btn-danger btn-lg" target="_blank" href="https://www.donationalerts.com/r/madkulolo">донатируй деду</a>
+        <a class="btn btn-primary btn-lg" target="_blank" href="https://boosty.to/madkulolo">батя гордился бы тобой?</a>
+        <a class="btn btn-primary btn-lg" target="_blank" href="https://memealerts.com/madkulolo">мемный алёрт</a>
     </div>
-    <div class="container">
-        <h1>С ДЕДОМ<br />НЕ СКУФИСЬ</h1>
-        <h2>ПОДЕЛИСЬ</h2>
-        <img src="/images/money.webp" alt="выбери уже">
-        <div class="btn-group">
-            <a class="btn btn-danger btn-lg" target="_blank" href="https://www.donationalerts.com/r/madkulolo">донатируй деду</a>
-            <a class="btn btn-primary btn-lg" target="_blank" href="https://boosty.to/madkulolo">батя гордился бы тобой?</a>
-            <a class="btn btn-primary btn-lg" target="_blank" href="https://memealerts.com/madkulolo">мемный алёрт</a>
-        </div>
-        <div class="social-links">
-            <a href="https://vk.com/kulologame_s" class="btn btn-link" target="_blank"><i class="fab fa-vk fa-fw"></i></a>
-            <a href="https://www.youtube.com/channel/UCVaL-dYvw-xIWv8sogeDylg" class="btn btn-link" target="_blank"><i class="fab fa-youtube fa-fw"></i></a>
-            <a href="https://t.me/+tl9RiWcbMVw5NzAy" class="btn btn-link" target="_blank"><i class="fab fa-telegram fa-fw"></i></a>
-            <a href="mailto:ads@mikhail.one" class="btn btn-link" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
-        </div>
-        <div class="back-to-home-wrapper">
-            <a href="#" id="backToHome" class="back-to-home" onclick="updateBackButton(event)">
-                <span id="backText">🔴ОбРаТНо На СтРиМ_</span>
-                <span class="close-btn">❌</span>
-            </a>
-        </div>
+
+    <div class="social-links">
+        <a href="https://vk.com/kulologame_s" class="btn btn-link" target="_blank"><i class="fab fa-vk fa-fw"></i></a>
+        <a href="https://www.youtube.com/channel/UCVaL-dYvw-xIWv8sogeDylg" class="btn btn-link" target="_blank"><i class="fab fa-youtube fa-fw"></i></a>
+        <a href="https://t.me/+tl9RiWcbMVw5NzAy" class="btn btn-link" target="_blank"><i class="fab fa-telegram fa-fw"></i></a>
+        <a href="mailto:ads@mikhail.one" class="btn btn-link" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
     </div>
-    <div class="popup-banner" id="popupBanner" style="display: none;">
-        <a href="https://www.twitch.tv/madkulolo" target="_blank">🔴 ДЕД НА СТРИМЕ, ВРЫВАЙСЯ! 🚀</a>
-        <span class="close-btn" onclick="closeBanner()">❌</span>
-    </div>
-    <script src="scripts.js"></script>
+</div>
+
+<div class="popup-banner" id="popupBanner" style="display: none;">
+    <a href="https://www.twitch.tv/madkulolo" target="_blank">🔴ОбРаТНо На СтРиМ_</a>
+    <a href="#" class="close-btn" onclick="closeBanner()">❌</a>
+</div>
+
+<script src="scripts.js"></script>
 </body>
 </html>
