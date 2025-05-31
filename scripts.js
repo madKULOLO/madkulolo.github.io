@@ -72,21 +72,43 @@ document.addEventListener('DOMContentLoaded', function() {
     const categories = Array.from(document.querySelectorAll('.command-category'));
     const commandsList = document.querySelector('.commands-list');
 
+    function resetCategories() {
+        categories.forEach(cat => {
+            cat.style.display = '';
+            cat.classList.remove('expanded');
+            const commandList = cat.querySelector('.command-list');
+            commandList.classList.remove('show');
+            commandList.querySelectorAll('li').forEach(li => li.style.display = '');
+        });
+        enableCategoryClicks(true);
+    }
+
+    function enableCategoryClicks(enable) {
+        categories.forEach(cat => {
+            const title = cat.querySelector('.category-title');
+            const commandList = cat.querySelector('.command-list');
+            if (enable) {
+                title.style.pointerEvents = '';
+                title.onclick = function() {
+                    commandList.classList.toggle('show');
+                    cat.classList.toggle('expanded');
+                };
+            } else {
+                title.style.pointerEvents = 'none';
+                title.onclick = null;
+            }
+        });
+    }
+
     searchInput.addEventListener('input', function() {
         const searchTerm = this.value.trim().toLowerCase();
 
         if (!searchTerm) {
-            categories.forEach(cat => {
-                cat.style.display = '';
-                const commandList = cat.querySelector('.command-list');
-                commandList.classList.remove('show');
-                cat.classList.remove('expanded');
-                commandList.querySelectorAll('li').forEach(li => li.style.display = '');
-            });
+            resetCategories();
             return;
         }
 
-        const foundCategories = [];
+        enableCategoryClicks(false);
 
         categories.forEach(cat => {
             let hasMatch = false;
@@ -102,23 +124,18 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (hasMatch) {
-                foundCategories.push(cat);
                 cat.style.display = '';
-                commandList.classList.add('show');
                 cat.classList.add('expanded');
+                commandList.classList.add('show');
             } else {
                 cat.style.display = 'none';
-                commandList.classList.remove('show');
                 cat.classList.remove('expanded');
+                commandList.classList.remove('show');
             }
         });
-
-        if (foundCategories.length && commandsList) {
-            foundCategories.reverse().forEach(cat => {
-                commandsList.insertBefore(cat, commandsList.firstChild);
-            });
-        }
     });
+
+    enableCategoryClicks(true);
 });
 
 function triggerConfetti() {
