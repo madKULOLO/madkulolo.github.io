@@ -226,7 +226,7 @@ function insertDedMarquee() {
     marquee.className = 'retro-marquee';
     marquee.setAttribute('behavior', 'scroll');
     marquee.setAttribute('direction', 'left');
-    marquee.innerHTML = 'ПОДДЕРЖИ ДЕДА! ДЕД ЛУЧШИЙ! ДЕДУ НУЖНЫ ДЕНЬГИ ДО ПЕНСИИ! ЮЗАЙ, DOCTYPE ХТМЛ, CSS И JS, ЧТОБЫ ПОМОЧЬ ДЕДУ! ДЕД СТРИМИТ НА TWITCH, ПОДПИШИСЬ НА НЁГО! ДЕД ХОЧЕТ КУПИТЬ НОВЫЙ КОМП, ПОМОГИ ЕМУ!';
+    marquee.innerHTML = 'ПОДДЕРЖИ ДЕДА ДЕНЮЖКОЙ! ДЕД ЛУЧШИЙ! ДЕДУ НУЖНЫ ДЕНЬГИ ДО ПЕНСИИ! ЮЗАЙ, DOCTYPE ХТМЛ, CSS И JS, ЧТОБЫ ПОМОЧЬ ДЕДУ! ДЕД СТРИМИТ НА TWITCH, ПОДПИШИСЬ НА НЁГО! ДЕД ХОЧЕТ КУПИТЬ НОВЫЙ КОМП, ПОМОГИ ЕМУ! ДОНАТЬ!';
     document.body.insertAdjacentElement('afterbegin', marquee);
 }
 
