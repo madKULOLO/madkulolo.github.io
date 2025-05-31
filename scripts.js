@@ -195,3 +195,13 @@ document.addEventListener('DOMContentLoaded', function() {
         loadingElement.setAttribute('data-text', randomText);
     }
 });
+function insertDedMarquee() {
+    const marquee = document.createElement('marquee');
+    marquee.className = 'retro-marquee';
+    marquee.setAttribute('behavior', 'scroll');
+    marquee.setAttribute('direction', 'left');
+    marquee.innerHTML = 'ПОДДЕРЖИ ДЕДА! ДЕД ЛУЧШИЙ! ДЕДУ НУЖНЫ ДЕНЬГИ ДО ПЕНСИИ! ЮЗАЙ, DOCTYPE ХТМЛ, CSS И JS, ЧТОБЫ ПОМОЧЬ ДЕДУ! ДЕД СТРИМИТ НА TWITCH, ПОДПИШИСЬ НА НЁГО! ДЕД ХОЧЕТ КУПИТЬ НОВЫЙ КОМП, ПОМОГИ ЕМУ!';
+    document.body.insertAdjacentElement('afterbegin', marquee);
+}
+
+document.addEventListener('DOMContentLoaded', insertDedMarquee);
