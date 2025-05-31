@@ -166,7 +166,7 @@ img:hover {
     transform: rotate(10deg) scale(1.1);
     box-shadow: 0 0 30px rgba(255, 0, 255, 0.8), 0 0 50px rgba(0, 255, 255, 0.8);
 }
-
+/* 
 .btn-link {
     font-size: 24px;
     color: #ff00ff;
@@ -181,7 +181,7 @@ img:hover {
     text-shadow: 2px 2px 5px #000000;
     transform: scale(1.2) rotate(360deg);
 }
-
+*/
 h1 {
     font-size: 6rem;
     text-transform: uppercase;
