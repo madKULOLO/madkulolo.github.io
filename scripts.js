@@ -13,7 +13,7 @@ function updateBackButton(event) {
 }
 
 async function checkStreamStatus() {
-    const channelName = "madkulolo";
+    const channelName = "mazon_alex";
     const clientId = "gp762nuuoqcoxypju8c569th9wz7q5";
     const accessToken = "nicnpw2xfm36f0fewnz1dtzww9i3hj";
 
@@ -71,6 +71,24 @@ function triggerConfetti() {
         spread: 80,
         origin: { y: 0.5 },
         colors: ['#ff0000', '#00ff00', '#0000ff', '#ff00ff', '#00ffff']
+    });
+}
+
+function triggerTrollConfetti() {
+    confetti({
+        particleCount: 40,
+        spread: 80,
+        origin: { y: 0.5 },
+        shapes: ['image'],
+        shapeOptions: {
+            image: [
+                {
+                    src: './images/trollface.png',
+                    width: 40,
+                    height: 40
+                }
+            ]
+        }
     });
 }
 
