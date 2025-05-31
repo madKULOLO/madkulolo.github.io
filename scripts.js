@@ -233,7 +233,7 @@ function insertDedMarquee() {
 document.addEventListener('DOMContentLoaded', insertDedMarquee);
 function insertFooter() {
     const footerContent = `
-        <p>© 1994 madKULOLO. Все права МОИ, потому что Я — ДЕДус.</p>
+        <p>© 1994 madKULOLO. Все права МОИ, потому что Я — ДЕДовик.</p>
         <p>Сделано ДЛЯ СЕБЯ, потому что Я заСЛУЖИЛ.</p>
         <p>Деньги идут МНЕ, потому что Я ЛУЧШИЙ. Спасибо, и ничего не обещаю, ибо ДЕМЕНЦИЯ!</p>
     `;
