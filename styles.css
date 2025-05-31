@@ -33,7 +33,7 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    animation: fadeOut 0.5s ease-in-out 2s forwards;
+    animation: fadeOut 1.5s ease-in-out 5s forwards;
 }
 
 #loading::before {
