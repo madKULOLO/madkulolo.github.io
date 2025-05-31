@@ -240,7 +240,7 @@ function insertFooter() {
         <p>Сделано ДЛЯ СЕБЯ, потому что Я заСЛУЖИЛ.</p>
         <p>Деньги идут МНЕ, потому что Я ЛУЧШИЙ. Спасибо, и ничего не обещаю, ибо ДЕМЕНЦИЯ!</p>
         <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <a href="/eyes.html" style="font-size: 18px; color: inherit; text-decoration: none; vertical-align: middle;">👁️</a>
+            <a href="/eyes" style="font-size: 18px; color: inherit; text-decoration: none; vertical-align: middle;">👁️</a>
             <small>Сайт протестирован и работает безусловно отлично во всех современных браузерах: IE 6, Mozilla Firefox 1.5, Opera 8, Safari 2, Netscape 8.</small>
         </div>
     `;
