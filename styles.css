@@ -568,30 +568,29 @@ img {
 
 .custom-confetti {
     position: fixed;
-    /* top: -20px; */
     border-radius: 50%;
     z-index: 99999;
     pointer-events: none;
-    /* animation: confetti-fall linear forwards; */
 }
-/* @keyframes confetti-fall {
-    to {
-        transform: translateY(110vh) rotate(360deg);
-        opacity: 0.7;
-    }
-} */
 
 .troll-confetti {
     position: fixed;
-    /* top: -40px; */
     z-index: 99999;
     pointer-events: none;
-    /* animation: troll-fall linear forwards; */
     user-select: none;
 }
-/* @keyframes troll-fall {
-    to {
-        transform: translateY(110vh) rotate(720deg);
-        opacity: 0.7;
-    }
-} */
+
+.bubble-bubble {
+    position: fixed;
+    pointer-events: none;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.08);
+    box-sizing: border-box;
+    box-shadow:
+        0 0 8px 2px rgba(255,255,255,0.15),
+        0 0 1px 0 rgba(0,0,0,0.15) inset;
+    will-change: transform, opacity;
+    transition: opacity 0.5s;
+    z-index: 9998;
+}
