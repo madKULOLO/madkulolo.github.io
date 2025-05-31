@@ -568,30 +568,30 @@ img {
 
 .custom-confetti {
     position: fixed;
-    top: -20px;
+    /* top: -20px; */
     border-radius: 50%;
     z-index: 99999;
     pointer-events: none;
-    animation: confetti-fall linear forwards;
+    /* animation: confetti-fall linear forwards; */
 }
-@keyframes confetti-fall {
+/* @keyframes confetti-fall {
     to {
         transform: translateY(110vh) rotate(360deg);
         opacity: 0.7;
     }
-}
+} */
 
 .troll-confetti {
     position: fixed;
-    top: -40px;
+    /* top: -40px; */
     z-index: 99999;
     pointer-events: none;
-    animation: troll-fall linear forwards;
+    /* animation: troll-fall linear forwards; */
     user-select: none;
 }
-@keyframes troll-fall {
+/* @keyframes troll-fall {
     to {
         transform: translateY(110vh) rotate(720deg);
         opacity: 0.7;
     }
-}
+} */

@@ -1,5 +1,5 @@
-const delay = 10; 
-const speed = 7; 
+const delay = 10;
+const speed = 7;
 let started = false;
 let intervalId = null;
 
@@ -10,18 +10,26 @@ function randomBetween(a, b) {
 function createBubble() {
     const bubble = document.createElement('div');
     bubble.className = 'bubble-bubble';
-    const size = randomBetween(20, 60);
+
+    const size = randomBetween(30, 80);
     bubble.style.width = size + 'px';
     bubble.style.height = size + 'px';
-    bubble.style.left = randomBetween(0, 100) + 'vw';
-    bubble.style.background = `rgba(${Math.floor(randomBetween(100,255))},${Math.floor(randomBetween(100,255))},${Math.floor(randomBetween(100,255))},${randomBetween(0.2,0.4)})`;
+
+    const side = Math.random() < 0.5 ? 'left' : 'right';
+    const offset = randomBetween(0, 10); 
     bubble.style.position = 'fixed';
-    bubble.style.bottom = '-70px';
+    bubble.style[side] = offset + 'px';
+    bubble.style.bottom = '-90px';
+
+    bubble.style.border = '2px solid rgba(255,255,255,0.7)';
+    bubble.style.background = 'rgba(255,255,255,0.08)';
     bubble.style.borderRadius = '50%';
     bubble.style.pointerEvents = 'none';
     bubble.style.zIndex = 9998;
-    bubble.style.boxShadow = `0 0 20px 5px rgba(0,0,0,0.1)`;
-    bubble.style.animation = `bubble-float ${randomBetween(8/speed, 16/speed)}s linear forwards`;
+    bubble.style.opacity = randomBetween(0.5, 0.9);
+
+    bubble.style.animation = `bubble-float ${randomBetween(10/speed, 18/speed)}s linear forwards`;
+
     document.body.appendChild(bubble);
 
     bubble.addEventListener('animationend', () => {
@@ -34,10 +42,12 @@ function createBubble() {
     style.textContent = `
 .bubble-bubble {
     will-change: transform, opacity;
+    box-sizing: border-box;
+    transition: opacity 0.5s;
 }
 @keyframes bubble-float {
     to {
-        transform: translateY(-110vh) scale(1.2) rotate(360deg);
+        transform: translateY(-110vh) scale(1.1) rotate(360deg);
         opacity: 0.2;
     }
 }
