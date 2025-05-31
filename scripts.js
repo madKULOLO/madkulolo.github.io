@@ -67,48 +67,57 @@ window.addEventListener('load', function() {
 
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('commandSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            if (searchTerm === '') {
-                document.querySelectorAll('.command-category').forEach(category => {
-                    const commandList = category.querySelector('.command-list');
-                    if (category.classList.contains('expanded')) {
-                        commandList.classList.add('show');
-                    } else {
-                        commandList.classList.remove('show');
-                    }
-                    commandList.querySelectorAll('ul li').forEach(li => li.style.display = 'list-item');
-                });
+    if (!searchInput) return;
+
+    const categories = Array.from(document.querySelectorAll('.command-category'));
+    const commandsList = document.querySelector('.commands-list');
+
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.trim().toLowerCase();
+
+        if (!searchTerm) {
+            categories.forEach(cat => {
+                cat.style.display = '';
+                const commandList = cat.querySelector('.command-list');
+                commandList.classList.remove('show');
+                cat.classList.remove('expanded');
+                commandList.querySelectorAll('li').forEach(li => li.style.display = '');
+            });
+            return;
+        }
+
+        const foundCategories = [];
+
+        categories.forEach(cat => {
+            let hasMatch = false;
+            const commandList = cat.querySelector('.command-list');
+            commandList.querySelectorAll('li').forEach(li => {
+                const text = li.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    li.style.display = '';
+                    hasMatch = true;
+                } else {
+                    li.style.display = 'none';
+                }
+            });
+
+            if (hasMatch) {
+                foundCategories.push(cat);
+                cat.style.display = '';
+                commandList.classList.add('show');
+                cat.classList.add('expanded');
             } else {
-                document.querySelectorAll('.command-category').forEach(category => {
-                    const commandList = category.querySelector('.command-list');
-                    const lis = commandList.querySelectorAll('ul li');
-                    const matchingLis = Array.from(lis).filter(li => li.textContent.toLowerCase().includes(searchTerm));
-                    if (matchingLis.length > 0) {
-                        commandList.classList.add('show');
-                        lis.forEach(li => {
-                            if (li.textContent.toLowerCase().includes(searchTerm)) {
-                                li.style.display = 'list-item';
-                            } else {
-                                li.style.display = 'none';
-                            }
-                        });
-                    } else {
-                        commandList.classList.remove('show');
-                    }
-                });
+                cat.style.display = 'none';
+                commandList.classList.remove('show');
+                cat.classList.remove('expanded');
             }
         });
-    }
 
-    const categoryTitles = document.querySelectorAll('.category-title');
-    categoryTitles.forEach(title => {
-        title.addEventListener('click', function() {
-            const commandList = this.nextElementSibling;
-            commandList.classList.toggle('show');
-            this.parentElement.classList.toggle('expanded');
-        });
+        if (foundCategories.length && commandsList) {
+            foundCategories.reverse().forEach(cat => {
+                commandsList.insertBefore(cat, commandsList.firstChild);
+            });
+        }
     });
 });
 
