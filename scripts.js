@@ -231,3 +231,18 @@ function insertDedMarquee() {
 }
 
 document.addEventListener('DOMContentLoaded', insertDedMarquee);
+function insertFooter() {
+    const footerContent = `
+        <p>© 1994 madKULOLO. Все права МОИ, потому что Я — ДЕДус.</p>
+        <p>Сделано ДЛЯ СЕБЯ, потому что Я заСЛУЖИЛ.</p>
+        <p>Деньги идут МНЕ, потому что Я ЛУЧШИЙ. Спасибо, и ничего не обещаю, ибо ДЕМЕНЦИЯ!</p>
+    `;
+
+    const footer = document.createElement('div');
+    footer.className = 'footer';
+    footer.innerHTML = footerContent;
+
+    document.body.insertAdjacentElement('beforeend', footer);
+}
+
+document.addEventListener('DOMContentLoaded', insertFooter);
