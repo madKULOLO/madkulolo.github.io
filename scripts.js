@@ -216,9 +216,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const loadingElement = document.getElementById('loading');
     if (loadingElement) {
+        loadingElement.style.display = 'flex';     
         const randomIndex = Math.floor(Math.random() * loadingTexts.length);
         const randomText = loadingTexts[randomIndex];
-        loadingElement.setAttribute('data-text', randomText);
+        loadingElement.setAttribute('data-text', randomText);       
+        window.performance.navigation.type === 1;
     }
 });
 function insertDedMarquee() {
