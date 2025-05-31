@@ -65,33 +65,6 @@ window.addEventListener('load', function() {
     document.getElementById('loading').style.display = 'none';
 });
 
-function triggerConfetti() {
-    confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.5 },
-        colors: ['#ff0000', '#00ff00', '#0000ff', '#ff00ff', '#00ffff']
-    });
-}
-
-function triggerTrollConfetti() {
-    confetti({
-        particleCount: 40,
-        spread: 80,
-        origin: { y: 0.5 },
-        shapes: ['image'],
-        shapeOptions: {
-            image: [
-                {
-                    src: './images/trollface.png',
-                    width: 40,
-                    height: 40
-                }
-            ]
-        }
-    });
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('commandSearch');
     if (searchInput) {

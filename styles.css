@@ -166,7 +166,7 @@ img:hover {
     transform: rotate(10deg) scale(1.1);
     box-shadow: 0 0 30px rgba(255, 0, 255, 0.8), 0 0 50px rgba(0, 255, 255, 0.8);
 }
-/* 
+
 .btn-link {
     font-size: 24px;
     color: #ff00ff;
@@ -181,7 +181,7 @@ img:hover {
     text-shadow: 2px 2px 5px #000000;
     transform: scale(1.2) rotate(360deg);
 }
-*/
+
 h1 {
     font-size: 6rem;
     text-transform: uppercase;
@@ -564,4 +564,34 @@ img {
     text-shadow: 1px 1px 2px #fff, 0 0 2px #ff00ff;
     opacity: 0.6;
     filter: blur(0.2px) grayscale(0.2);
+}
+
+.custom-confetti {
+    position: fixed;
+    top: -20px;
+    border-radius: 50%;
+    z-index: 99999;
+    pointer-events: none;
+    animation: confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+    to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0.7;
+    }
+}
+
+.troll-confetti {
+    position: fixed;
+    top: -40px;
+    z-index: 99999;
+    pointer-events: none;
+    animation: troll-fall linear forwards;
+    user-select: none;
+}
+@keyframes troll-fall {
+    to {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0.7;
+    }
 }
