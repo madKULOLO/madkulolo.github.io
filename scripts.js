@@ -224,16 +224,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 function insertDedMarquee() {
-    const marqueeText = 'ПОДДЕРЖИ ДЕДА ДЕНЮЖКОЙ! ДЕД ЛУЧШИЙ! ДЕДУ НУЖНЫ ДЕНЬГИ ДО ПЕНСИИ! ЮЗАЙ, DOCTYPE ХТМЛ, CSS И JS, ЧТОБЫ ПОМОЧЬ ДЕДУ! ДЕД СТРИМИТ НА TWITCH, ПОДПИШИСЬ НА НЁГО! ДЕД ХОЧЕТ КУПИТЬ НОВЫЙ КОМП, ПОМОГИ ЕМУ! ДОНАТЬ!';
-    const marqueeContainer = document.getElementById('marquee-container');
-
-    if (marqueeContainer) {
-        marqueeContainer.className = 'marquee-container';
-        marqueeContainer.innerHTML = `
-            <div class="marquee-content">${marqueeText}</div>
-            <div class="marquee-content">${marqueeText}</div>
-        `;
-    }
+    const marquee = document.createElement('marquee');
+    marquee.className = 'retro-marquee';
+    marquee.setAttribute('behavior', 'scroll');
+    marquee.setAttribute('direction', 'left');
+    marquee.innerHTML = 'ПОДДЕРЖИ ДЕДА ДЕНЮЖКОЙ! ДЕД ЛУЧШИЙ! ДЕДУ НУЖНЫ ДЕНЬГИ ДО ПЕНСИИ! ЮЗАЙ, DOCTYPE ХТМЛ, CSS И JS, ЧТОБЫ ПОМОЧЬ ДЕДУ! ДЕД СТРИМИТ НА TWITCH, ПОДПИШИСЬ НА НЁГО! ДЕД ХОЧЕТ КУПИТЬ НОВЫЙ КОМП, ПОМОГИ ЕМУ! ДОНАТЬ!';
+    document.body.insertAdjacentElement('afterbegin', marquee);
 }
 
 document.addEventListener('DOMContentLoaded', insertDedMarquee);
