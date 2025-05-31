@@ -14,36 +14,40 @@
     <meta name="author" content="madKULOLO">
     <link rel="shortcut icon" href="/images/logo.png" />
     <link rel="stylesheet" href="styles.css">
-    <!-- зачем ты сюда полез? Тут всё итак красиво, ЭТО ДИЗАЙН ТЫ НЕ ШАРИШЬ ПРСТ! -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<div class="container">
-    <h1>С ДЕДОМ<br />НЕ СКУФИСЬ</h1>
-    <h2>ПОДЕЛИСЬ</h2>
-
-    <img src="/images/money.webp" alt="выбери уже">
-
-    <div class="btn-group">
-        <a class="btn btn-danger btn-lg" target="_blank" href="https://www.donationalerts.com/r/madkulolo">донатируй деду</a>
-        <a class="btn btn-primary btn-lg" target="_blank" href="https://boosty.to/madkulolo">батя гордился бы тобой?</a>
-        <a class="btn btn-primary btn-lg" target="_blank" href="https://memealerts.com/madkulolo">мемный алёрт</a>
+    <marquee behavior="scroll" direction="left" class="retro-marquee">
+        ПОДДЕРЖИ ДЕДА! ДЕД ЛУЧШИЙ! ДЕДУ НУЖНЫ ДЕНЬГИ ДО ПЕНСИИ! ЮЗАЙ, DOCTYPE ХТМЛ, CSS И JS, ЧТОБЫ ПОМОЧЬ ДЕДУ! ДЕД СТРИМИТ НА TWITCH, ПОДПИШИСЬ НА НЁГО! ДЕД ХОЧЕТ КУПИТЬ НОВЫЙ КОМП, ПОМОГИ ЕМУ!
+    </marquee>
+    <div id="loading"></div>
+    <div class="container">
+        <h1>С ДЕДОМ<br />НЕ СКУФИСЬ</h1>
+        <h2>ПОДЕЛИСЬ</h2>
+        <img src="./images/money.webp" alt="выбери уже">
+        <div class="btn-group">
+            <a class="btn btn-danger btn-lg" target="_blank" href="https://www.donationalerts.com/r/madkulolo" onclick="triggerConfetti()">донатируй деду</a>
+            <a class="btn btn-primary btn-lg" target="_blank" href="https://boosty.to/madkulolo">батя гордился бы тобой?</a>
+            <a class="btn btn-primary btn-lg" target="_blank" href="https://memealerts.com/madkulolo">мемный алёрт</a>
+        </div>
+        <div class="social-links">
+            <a href="https://vk.com/kulologame_s" class="btn btn-link" target="_blank"><i class="fab fa-vk fa-fw"></i></a>
+            <a href="https://www.youtube.com/channel/UCVaL-dYvw-xIWv8sogeDylg" class="btn btn-link" target="_blank"><i class="fab fa-youtube fa-fw"></i></a>
+            <a href="https://t.me/+tl9RiWcbMVw5NzAy" class="btn btn-link" target="_blank"><i class="fab fa-telegram fa-fw"></i></a>
+            <a href="mailto:ads@mikhail.one" class="btn btn-link" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+        </div>
     </div>
-
-    <div class="social-links">
-        <a href="https://vk.com/kulologame_s" class="btn btn-link" target="_blank"><i class="fab fa-vk fa-fw"></i></a>
-        <a href="https://www.youtube.com/channel/UCVaL-dYvw-xIWv8sogeDylg" class="btn btn-link" target="_blank"><i class="fab fa-youtube fa-fw"></i></a>
-        <a href="https://t.me/+tl9RiWcbMVw5NzAy" class="btn btn-link" target="_blank"><i class="fab fa-telegram fa-fw"></i></a>
-        <a href="mailto:ads@mikhail.one" class="btn btn-link" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+    <div class="popup-banner" id="popupBanner" style="display: none;">
+        <a href="https://www.twitch.tv/madkulolo" target="_blank">🔴ОбРаТНо На СтРиМ_</a>
+        <a href="#" class="close-btn" onclick="closeBanner()">❌</a>
     </div>
-</div>
-
-<div class="popup-banner" id="popupBanner" style="display: none;">
-    <a href="https://www.twitch.tv/madkulolo" target="_blank">🔴ОбРаТНо На СтРиМ_</a>
-    <a href="#" class="close-btn" onclick="closeBanner()">❌</a>
-</div>
-
-<script src="scripts.js"></script>
+    <div class="footer">
+        <p>© 1994 madKULOLO. Все права МОИ, потому что Я — ДЕДус.</p>
+        <p>Сделано ДЛЯ СЕБЯ, потому что Я заСЛУЖИЛ.</p>
+        <p>Деньги идут МНЕ, потому что Я ЛУЧШИЙ. Спасибо, и ничего не обещаю, ибо ДЕМЕНЦИЯ!</p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>
