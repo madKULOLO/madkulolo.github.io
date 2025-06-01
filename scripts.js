@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const categories = Array.from(document.querySelectorAll('.command-category'));
     const commandsList = document.querySelector('.commands-list');
+
     const easterEggs = {
         'нигер': () => {
             alert('Дед говорит: не шути так, а то бан прилетит!');
@@ -143,6 +144,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     searchInput.addEventListener('input', function() {
         const searchTerm = this.value.trim().toLowerCase();
+
+        if (easterEggs[searchTerm]) {
+            easterEggs[searchTerm]();
+        }
 
         if (!searchTerm) {
             resetCategories();
