@@ -111,6 +111,41 @@ document.addEventListener('DOMContentLoaded', function() {
             msg.innerHTML = '💖 MrrMaikl — ЛУЧШАЯ ЖЕНА ДЕДА! 💖';
             document.body.appendChild(msg);
             setTimeout(() => msg.remove(), 3000);
+        },
+        'alonerus': () => {
+            const img = document.createElement('img');
+            img.src = './images/neko-8.jpg';
+            img.alt = 'neko';
+            img.style.position = 'fixed';
+            img.style.left = '50%';
+            img.style.top = '50%';
+            img.style.transform = 'translate(-50%, -50%)';
+            img.style.zIndex = 99999;
+            img.style.maxWidth = '60vw';
+            img.style.maxHeight = '60vh';
+            img.style.border = '8px solid #ff00ff';
+            img.style.borderRadius = '30px';
+            img.style.boxShadow = '0 0 40px #00ff00';
+            document.body.appendChild(img);
+            setTimeout(() => img.remove(), 3500);
+        },
+        'kessidi': () => {
+            const msg = document.createElement('div');
+            msg.style.position = 'fixed';
+            msg.style.left = '50%';
+            msg.style.top = '50%';
+            msg.style.transform = 'translate(-50%, -50%)';
+            msg.style.zIndex = 99999;
+            msg.style.fontSize = '2em';
+            msg.style.background = '#fff0f6';
+            msg.style.color = '#ff00ff';
+            msg.style.border = '6px dashed #ff00ff';
+            msg.style.borderRadius = '30px';
+            msg.style.padding = '30px 40px';
+            msg.style.boxShadow = '0 0 40px #ff00ff';
+            msg.innerHTML = '🦵🥲 <b>Kessidi</b>, дед ждёт твои ножки уже много лет... <br>Когда же дед дождётся? 😭🦵';
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 4000);
         }
     };
 
