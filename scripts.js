@@ -72,6 +72,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const categories = Array.from(document.querySelectorAll('.command-category'));
     const commandsList = document.querySelector('.commands-list');
+    const easterEggs = {
+        'нигер': () => {
+            alert('Дед говорит: не шути так, а то бан прилетит!');
+        },
+        'яйцо': () => {
+            const egg = document.createElement('div');
+            egg.style.position = 'fixed';
+            egg.style.left = '50%';
+            egg.style.top = '50%';
+            egg.style.transform = 'translate(-50%, -50%)';
+            egg.style.zIndex = 99999;
+            egg.style.fontSize = '5em';
+            egg.style.background = '#fff';
+            egg.style.border = '8px solid #ff00ff';
+            egg.style.borderRadius = '50%';
+            egg.style.padding = '40px 60px';
+            egg.style.boxShadow = '0 0 40px #ff00ff';
+            egg.textContent = '🥚';
+            document.body.appendChild(egg);
+            setTimeout(() => egg.remove(), 2500);
+        },
+        'mrrmaikl': () => {
+            const msg = document.createElement('div');
+            msg.style.position = 'fixed';
+            msg.style.left = '50%';
+            msg.style.top = '50%';
+            msg.style.transform = 'translate(-50%, -50%)';
+            msg.style.zIndex = 99999;
+            msg.style.fontSize = '2.5em';
+            msg.style.background = '#ffff00';
+            msg.style.color = '#ff00ff';
+            msg.style.border = '8px double #00ff00';
+            msg.style.borderRadius = '30px';
+            msg.style.padding = '30px 40px';
+            msg.style.boxShadow = '0 0 40px #00ff00';
+            msg.innerHTML = '💖 MrrMaikl — ЛУЧШАЯ ЖЕНА ДЕДА! 💖';
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 3000);
+        }
+    };
 
     function resetCategories() {
         categories.forEach(cat => {
