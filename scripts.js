@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
             msg.style.borderRadius = '30px';
             msg.style.padding = '30px 40px';
             msg.style.boxShadow = '0 0 40px #ff00ff';
-            msg.innerHTML = '🦵🥲 <b>Kessidi</b>, дед ждёт твои ножки уже много лет... <br>Когда же дед дождётся? 😭🦵';
+            msg.innerHTML = '🦵😿 <b>Kessidi</b>, дед ждёт твои ножки уже много лет... <br>Когда же дед дождётся? 😭🦵';
             document.body.appendChild(msg);
             setTimeout(() => msg.remove(), 4000);
         }
