@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>DEDUS.DOC - ДедАНУСИ Интерактив Гейм</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dedos.css">
+</head>
+<body>
+    <div class="boot-sequence" id="bootSequence">
+        <pre id="bootText"></pre>
+    </div>
+    <canvas id="matrixCanvas" class="matrix-canvas"></canvas>
+    <div class="ansi-doc">
+        <span class="ansi-title">DEDUS.DOC -- ДедАНУСИ Интерактив Гейм v1.0</span>
+        <span>
+Добро пожаловать в <b>дедАНУСи интерактив DOC-гейм!</b><br>
+Ты не просто юзер, ты -- хакер из 90-х, мемный гений и DOS-гуру!<br>
+Введи команду, как будто твой 486-й ещё не сгорел.<br>
+        </span>
+        <div class="ansi-cmdline">
+            <span class="ansi-cmdlabel">C:\DEDUS></span>
+            <span style="position:relative;flex:1;display:flex;align-items:center;">
+                <input type="text" class="ansi-input" id="ansiInput" autocomplete="off" autofocus>
+                <span class="ansi-cursor" id="ansiCursor"></span>
+            </span>
+        </div>
+        <div class="game-controls" id="gameControls">
+            <button class="game-btn" data-dir="up">▲</button>
+            <button class="game-btn" data-dir="left">◀</button>
+            <button class="game-btn" data-dir="down">▼</button>
+            <button class="game-btn" data-dir="right">▶</button>
+            <button class="game-btn" data-dir="fire">🔫</button>
+        </div>
+        <div class="ansi-output" id="ansiOutput"></div>
+        <div class="ansi-footer">
+            <span id="motivation" class="motivation"></span>
+            <br>
+            <span>
+                DOC-ностальгия, дедовский угар, мемы и Y2K-вайб.<br>
+                <b>dedANUSi™</b> -- твой 56K-модем в мир DOS-хаоса.<br>
+            </span>
+            <div class="doc-menu" id="docMenu">
+                <a href="/" class="doc-menu-item" tabindex="0">[ ГЛАВНАЯ ]</a>
+                <a href="/commands" class="doc-menu-item" tabindex="0">[ КОМАНДЫ ]</a>
+                <a href="https://www.donationalerts.com/r/madkulolo" target="_blank" class="doc-menu-item" tabindex="0">[ ДОНАТ ]</a>
+            </div>
+        </div>
+    </div>
+    <script src="dedos.js"></script>
+</body>
+</html>

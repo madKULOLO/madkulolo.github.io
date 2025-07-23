@@ -1,0 +1,321 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #111;
+    color: #0f0;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    font-size: clamp(14px, 1.8vmin, 16px);
+    letter-spacing: 1px;
+    overflow-y: auto;
+    touch-action: manipulation;
+    box-sizing: border-box;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(rgba(0,0,0,0.15) 0, rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px);
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.6;
+}
+
+.ansi-doc {
+    max-width: 98vmin;
+    min-width: 300px;
+    margin: 2vmin auto;
+    background: #181818;
+    border: 4px double #fff;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+    padding: clamp(8px, 1.5vmin, 10px);
+    border-radius: 4px;
+    text-align: left;
+    white-space: pre-wrap;
+    color: #0f0;
+    position: relative;
+    box-sizing: border-box;
+    animation: crt-flicker 0.03s infinite alternate;
+}
+
+@keyframes crt-flicker {
+    0% { opacity: 0.97; }
+    100% { opacity: 1; }
+}
+
+.ansi-title {
+    color: #fff;
+    font-weight: bold;
+    font-size: clamp(1em, 2.2vmin, 1.3em);
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+    display: block;
+    text-align: center;
+    animation: crt-glow 0.5s infinite alternate;
+}
+
+@keyframes crt-glow {
+    0% { text-shadow: 0 0 5px #0f0, 0 0 10px #0f0; }
+    100% { text-shadow: 0 0 8px #0f0, 0 0 15px #0f0; }
+}
+
+.ansi-cmdline {
+    display: flex;
+    align-items: center;
+    margin-top: 16px;
+    font-size: clamp(0.8em, 1.8vmin, 0.9em);
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+.ansi-cmdlabel {
+    color: #fff;
+    margin-right: 8px;
+    flex-shrink: 0;
+    min-width: max-content;
+    font-size: inherit;
+    display: flex;
+    align-items: center;
+}
+
+.ansi-input {
+    background: transparent;
+    border: none;
+    color: #0f0;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    font-size: inherit;
+    outline: none;
+    width: 100%;
+    min-width: 80px;
+    max-width: 90vmin;
+    flex: 1 1 150px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+}
+
+.ansi-cursor {
+    width: 10px;
+    height: 1.2em;
+    background: #fff;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: -2px;
+    animation: blink 0.7s steps(2, start) infinite;
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.ansi-output {
+    margin-top: 12px;
+    color: #fff;
+    font-size: clamp(0.8em, 1.8vmin, 0.9em);
+    min-height: 1.2em;
+    white-space: pre-wrap;
+    background: #222;
+    border: 2px double #fff;
+    padding: 10px;
+    border-radius: 2px;
+    overflow-y: hidden;
+    max-height: 70vh;
+    word-break: break-word;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-shadow: 0 0 3px #0f0;
+}
+
+.ansi-output pre {
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    font-size: inherit;
+    line-height: 1;
+    letter-spacing: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+}
+
+.game-field {
+    font-family: 'Courier New', monospace;
+    display: inline-block;
+    margin: 0 auto;
+    text-align: left;
+    background: #222;
+    border-radius: 2px;
+    white-space: pre;
+    font-size: clamp(0.8em, 1.5vmin, 1em);
+    line-height: 1;
+    width: auto;
+    max-width: 100%;
+    box-sizing: border-box;
+    transform: scale(1);
+    transform-origin: top left;
+}
+
+.ansi-footer {
+    margin-top: 20px;
+    color: #fff;
+    font-size: clamp(0.8em, 1.8vmin, 0.9em);
+    text-align: center;
+    background: #181818;
+    border: 2px double #fff;
+    padding: 8px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+}
+
+.game-controls {
+    display: none;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.game-btn {
+    background: #222;
+    color: #fff;
+    border: 2px double #fff;
+    border-radius: 2px;
+    font-size: clamp(0.8em, 1.8vmin, 0.9em);
+    padding: 8px 14px;
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+.game-btn:active, .game-btn.active {
+    background: #fff;
+    color: #222;
+}
+
+.motivation {
+    color: #0f0;
+    font-weight: bold;
+    font-size: clamp(0.9em, 2vmin, 1em);
+    margin-top: 8px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px #0f0;
+}
+
+.doc-menu {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.doc-menu-item {
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    color: #fff;
+    background: #222;
+    border: 2px double #fff;
+    padding: 6px 10px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: clamp(0.8em, 1.8vmin, 0.9em);
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.doc-menu-item:hover, .doc-menu-item:focus, .doc-menu-item.active {
+    background: #444;
+    color: #ff0;
+    box-shadow: 0 0 8px #ff0;
+}
+
+.boot-sequence {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    color: #0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 1000;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(0.7em, 1.6vmin, 0.8em);
+    white-space: pre-wrap;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.boot-sequence.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.matrix-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: none;
+}
+
+.matrix-glitch {
+    animation: glitch-flash 0.2s infinite alternate;
+}
+
+@keyframes glitch-flash {
+    0% { filter: brightness(1); }
+    100% { filter: brightness(1.5); }
+}
+
+@media (max-width: 600px) {
+    .ansi-doc {
+        padding: clamp(6px, 1.2vmin, 8px);
+        margin: 1vmin auto;
+    }
+    .ansi-title {
+        font-size: clamp(0.9em, 2vmin, 1.1em);
+    }
+    .ansi-cmdline {
+        font-size: clamp(0.7em, 1.6vmin, 0.8em);
+    }
+    .ansi-input {
+        max-width: 100%;
+    }
+    .game-field {
+        font-size: clamp(0.7em, 1.3vmin, 0.9em);
+        transform: scale(0.95);
+    }
+    .game-btn {
+        min-width: 40px;
+        min-height: 40px;
+        padding: 6px 10px;
+    }
+    .doc-menu {
+        gap: 8px;
+    }
+    .doc-menu-item {
+        padding: 5px 8px;
+        font-size: clamp(0.7em, 1.6vmin, 0.8em);
+    }
+    .ansi-output {
+        max-height: 60vh;
+    }
+}
