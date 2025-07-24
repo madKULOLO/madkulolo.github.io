@@ -545,7 +545,7 @@ function drawInvaders() {
         gameField.className = 'game-field';
         const pre = document.createElement('pre');
         pre.style.cssText = "margin:0; font-family:'Courier New', monospace; font-size:inherit; line-height:1; letter-spacing:0; background:none; border:none; padding:0; text-align:left;";
-        pre.textContent = `Space Invaders (стрелки/кнопки/свайпы, огонь: пробел/🔫)\nПодсчёт: ${invadersScore} | Жизни: ${invadersLives}\n╔${"═".repeat(invadersW)}╗\n${field.map(r => "║" + r.join('') + "║").join('\n')}\n╚${"═".repeat(invadersW)}╝\n${invadersScore > 500 ? "(¬‿¬) Ты космический ас!" : "(ಠ_ಠ) Спаси Землю, хакер!"}`;
+        pre.textContent = `Space Invaders (стрелки/кнопки/свайпы, огонь: пробел/▄︻デ╦︻)\nПодсчёт: ${invadersScore} | Жизни: ${invadersLives}\n╔${"═".repeat(invadersW)}╗\n${field.map(r => "║" + r.join('') + "║").join('\n')}\n╚${"═".repeat(invadersW)}╝\n${invadersScore > 500 ? "(¬‿¬) Ты военно-космический асс!" : "(ಠ_ಠ) Спаси Землю, хацкер!"}`;
         gameField.appendChild(pre);
         output.appendChild(gameField);
     } catch (e) {
@@ -567,7 +567,7 @@ function moveInvaders() {
             invadersAliens.forEach(a => { a[0] += a[2]; });
         }
         if (maxY >= invadersH - 1) {
-            endInvaders("GAME OVER! Пришельцы захватили Землю!\n(¬_¬) n00b detected!");
+            endInvaders("GAME OVER! Пришельцы захватили уКрим!\n(¬_¬) n00b detected!");
             return;
         }
         invadersBullets = invadersBullets.filter(b => b[1] >= 0);
@@ -682,7 +682,7 @@ function drawBreakout() {
         gameField.className = 'game-field';
         const pre = document.createElement('pre');
         pre.style.cssText = "margin:0; font-family:'Courier New', monospace; font-size:inherit; line-height:1; letter-spacing:0; background:none; border:none; padding:0; text-align:left;";
-        pre.textContent = `Breakout (стрелки/кнопки/свайпы)\nПодсчёт: ${breakoutScore} | Жизни: ${breakoutLives}\n╔${"═".repeat(breakoutW)}╗\n${field.map(r => "║" + r.join('') + "║").join('\n')}\n╚${"═".repeat(breakoutW)}╝\n${breakoutScore > 500 ? "(¬‿¬) Ты мастер шарика!" : "(ಠ_ಠ) Бей блоки, хакер!"}`;
+        pre.textContent = `Breakout (стрелки/кнопки/свайпы)\nПодсчёт: ${breakoutScore} | Жизни: ${breakoutLives}\n╔${"═".repeat(breakoutW)}╗\n${field.map(r => "║" + r.join('') + "║").join('\n')}\n╚${"═".repeat(breakoutW)}╝\n${breakoutScore > 500 ? "(¬‿¬) Ты мастер катания шаров!" : "(ಠ_ಠ) Бей блоки, хацкер!"}`;
         gameField.appendChild(pre);
         output.appendChild(gameField);
     } catch (e) {
