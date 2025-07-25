@@ -1390,9 +1390,8 @@ document.addEventListener('keydown', function(e) {
 });
 
 menuItems.forEach((el, i) => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e) => {
         try {
-            window.open(el.href, el.target === '_blank' ? '_blank' : '_self');
             playSound(1000, 0.05);
         } catch (e) {}
     });
