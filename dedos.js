@@ -1,12 +1,56 @@
+let globalAudioCtx = null;
 function playSound(freq, duration = 0.05, type = 'square') {
     try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (!globalAudioCtx || globalAudioCtx.state === 'closed') {
+            globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const ctx = globalAudioCtx;
         const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
         oscillator.type = type;
         oscillator.frequency.setValueAtTime(freq, ctx.currentTime);
-        oscillator.connect(ctx.destination);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime); 
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
         oscillator.start();
         oscillator.stop(ctx.currentTime + duration);
+        oscillator.onended = () => {
+            oscillator.disconnect();
+            gain.disconnect();
+        };
+    } catch (e) {
+    }
+}
+function cleanupAllGamesAndAnimations() {
+    try {
+        if (typeof matrixInterval !== 'undefined' && matrixInterval) {
+            clearInterval(matrixInterval);
+            matrixInterval = null;
+            if (typeof matrixCanvas !== 'undefined') matrixCanvas.style.display = 'none';
+        }
+        if (typeof snakeInterval !== 'undefined' && snakeInterval) {
+            clearInterval(snakeInterval);
+            snakeInterval = null;
+        }
+        if (typeof tetrisInterval !== 'undefined' && tetrisInterval) {
+            clearInterval(tetrisInterval);
+            tetrisInterval = null;
+        }
+        if (typeof invadersInterval !== 'undefined' && invadersInterval) {
+            clearInterval(invadersInterval);
+            invadersInterval = null;
+        }
+        if (typeof breakoutInterval !== 'undefined' && breakoutInterval) {
+            clearInterval(breakoutInterval);
+            breakoutInterval = null;
+        }
+        snakeActive = false;
+        tetrisActive = false;
+        invadersActive = false;
+        breakoutActive = false;
+        guessActive = false;
+        if (typeof gameControls !== 'undefined') gameControls.style.display = 'none';
+        if (typeof matrixCanvas !== 'undefined') matrixCanvas.style.display = 'none';
     } catch (e) {}
 }
 
@@ -80,7 +124,53 @@ function typeBoot() {
         typeOutput("ERROR: Boot failed!\n(-_-) Твой 486-й сгорел?");
     }
 }
-typeBoot();
+
+
+function showDedosPowerOverlay() {
+    const overlay = document.getElementById('dedosUnlockOverlay');
+    if (!overlay) return;
+    if (!overlay.hasChildNodes()) {
+        overlay.className = 'dedos-unlock-overlay';
+        overlay.innerHTML = `
+          <div class="dedos-unlock-content">
+            <div class="dedos-unlock-title">dedOS</div>
+            <div class="dedos-unlock-desc">
+              <span>ВКЛЮЧИТЬ ЭВМ?</span><br>
+              <div style="margin:14px 0 0 0; color:#0f0; font-size:1em; font-family:'Courier New',monospace;">C:\DEDOS&gt;_</div>
+            </div>
+            <button id="dedosPowerBtn" class="dedos-unlock-btn" tabindex="0">
+              <span class="dedos-power-lamp"><span class="dedos-power-lamp-dot"></span></span>
+              <span style="letter-spacing:2px;">ВКЛ / POWER</span>
+            </button>
+            <div class="dedos-unlock-footer">RETRO DED PC BOOT SEQUENCE © 1994</div>
+          </div>
+        `;
+    }
+    const btn = document.getElementById('dedosPowerBtn');
+    if (btn) {
+        btn.addEventListener('click', function() {
+            try {
+                playSound(110, 0.09, 'square');
+                setTimeout(() => playSound(60, 0.07, 'square'), 60);
+            } catch(e) {}
+            try {
+                if (window.globalAudioCtx) {
+                    if (globalAudioCtx.state === 'suspended') globalAudioCtx.resume();
+                } else if (window.AudioContext || window.webkitAudioContext) {
+                    window.globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            } catch (e) {}
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                document.getElementById('bootSequence').style.display = '';
+                typeBoot();
+            }, 220);
+        });
+    }
+    document.getElementById('bootSequence').style.display = 'none';
+}
+
+window.addEventListener('DOMContentLoaded', showDedosPowerOverlay);
 
 const input = document.getElementById('ansiInput');
 const cursor = document.getElementById('ansiCursor');
@@ -112,6 +202,7 @@ const matrixCanvas = document.getElementById('matrixCanvas');
 let matrixInterval = null;
 function startMatrix() {
     try {
+        cleanupAllGamesAndAnimations();
         playModemSound(() => {
             const ctx = matrixCanvas.getContext('2d');
             matrixCanvas.style.display = 'block';
@@ -333,6 +424,7 @@ function endSnake(msg) {
 
 function startSnake() {
     try {
+        cleanupAllGamesAndAnimations();
         snakeActive = true;
         snakeDir = 'right';
         snakeScore = 0;
@@ -508,6 +600,7 @@ function endTetris(msg) {
 
 function startTetris() {
     try {
+        cleanupAllGamesAndAnimations();
         tetrisActive = true;
         tetrisBoard = Array(tetrisH).fill().map(() => Array(tetrisW).fill(0));
         tetrisScore = 0;
@@ -654,6 +747,7 @@ function endInvaders(msg) {
 
 function startInvaders() {
     try {
+        cleanupAllGamesAndAnimations();
         invadersActive = true;
         invadersPlayer = [23, 15];
         invadersBullets = [];
@@ -773,6 +867,7 @@ function endBreakout(msg) {
 
 function startBreakout() {
     try {
+        cleanupAllGamesAndAnimations();
         breakoutActive = true;
         breakoutPaddle = [22, 15];
         breakoutBall = [24, 14];
@@ -816,7 +911,7 @@ document.addEventListener('keydown', function(e) {
         } else if (invadersActive) {
             if (e.key === 'ArrowLeft' && invadersPlayer[0] > 0) invadersPlayer[0]--;
             if (e.key === 'ArrowRight' && invadersPlayer[0] < invadersW - 1) invadersPlayer[0]++;
-            if (e.key === ' ') {
+            if (e.key === ' ' || e.key === 'ArrowUp') {
                 invadersBullets.push([invadersPlayer[0], invadersPlayer[1] - 1]);
                 playSound(1000, 0.05);
             }
@@ -1050,6 +1145,7 @@ input.addEventListener('keydown', function(e) {
 
 function startGuess() {
     try {
+        cleanupAllGamesAndAnimations();
         guessActive = true;
         guessNumber = Math.floor(Math.random() * 100) + 1;
         guessTries = 0;
