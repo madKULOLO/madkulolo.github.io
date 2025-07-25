@@ -1296,7 +1296,7 @@ function handleCommand(cmd) {
             return;
         }
         if (!response && cmd === "nwrath") {
-            typeOutput("У деда классный БОЛЬШОЙ писюнчик © NWrath 25.07.2025");
+            typeOutput("У деда классный БОЛЬШОЙ писюнчик, мне даже щупалец не хватает © NWrath 25.07.2025");
         } else {
             typeOutput(response || "ERROR 404: Команда не найдена!\n(ಠ_ಠ) Твой 486-й сгорел, ламер?\nПопробуй help!");
         }
