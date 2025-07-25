@@ -895,6 +895,9 @@ function startBreakout() {
 document.addEventListener('keydown', function(e) {
     try {
         if (snakeActive) {
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                e.preventDefault();
+            }
             if (e.key === 'ArrowUp' && snakeDir !== 'down') snakeDir = 'up';
             if (e.key === 'ArrowDown' && snakeDir !== 'up') snakeDir = 'down';
             if (e.key === 'ArrowLeft' && snakeDir !== 'right') snakeDir = 'left';
