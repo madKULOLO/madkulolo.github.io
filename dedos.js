@@ -140,7 +140,7 @@ function showDedosPowerOverlay() {
             </div>
             <button id="dedosPowerBtn" class="dedos-unlock-btn" tabindex="0">
               <span class="dedos-power-lamp"><span class="dedos-power-lamp-dot"></span></span>
-              <span style="letter-spacing:2px;">ВКЛ / POWER</span>
+              <span style="letter-spacing:2px;">ВКЛ</span>
             </button>
             <div class="dedos-unlock-footer">RETRO DED PC BOOT SEQUENCE © 1994</div>
           </div>
