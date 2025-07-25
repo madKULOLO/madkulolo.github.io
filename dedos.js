@@ -340,6 +340,8 @@ function startSnake() {
         snakeFood = randomFood();
         drawSnake();
         gameControls.style.display = 'flex';
+        const fireBtn = gameControls.querySelector('[data-dir="fire"]');
+        if (fireBtn) fireBtn.style.display = 'none';
         clearInterval(snakeInterval);
         snakeInterval = setInterval(moveSnake, 150);
     } catch (e) {
@@ -506,6 +508,8 @@ function startTetris() {
         newTetrisPiece();
         drawTetris();
         gameControls.style.display = 'flex';
+        const fireBtn = gameControls.querySelector('[data-dir="fire"]');
+        if (fireBtn) fireBtn.style.display = 'none';
         clearInterval(tetrisInterval);
         tetrisInterval = setInterval(moveTetris, 400);
     } catch (e) {
@@ -648,6 +652,8 @@ function startInvaders() {
         initInvaders();
         drawInvaders();
         gameControls.style.display = 'flex';
+        const fireBtn = gameControls.querySelector('[data-dir="fire"]');
+        if (fireBtn) fireBtn.style.display = '';
         clearInterval(invadersInterval);
         invadersInterval = setInterval(moveInvaders, 500);
     } catch (e) {
@@ -758,6 +764,8 @@ function startBreakout() {
         initBreakoutBlocks();
         drawBreakout();
         gameControls.style.display = 'flex';
+        const fireBtn = gameControls.querySelector('[data-dir="fire"]');
+        if (fireBtn) fireBtn.style.display = 'none';
         clearInterval(breakoutInterval);
         breakoutInterval = setInterval(moveBreakout, 100);
     } catch (e) {
