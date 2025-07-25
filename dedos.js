@@ -441,7 +441,7 @@ function startSnake() {
         if (btnLeft) btnLeft.style.display = '';
         if (btnRight) btnRight.style.display = '';
         clearInterval(snakeInterval);
-        snakeInterval = setInterval(moveSnake, 150);
+        snakeInterval = setInterval(moveSnake, 250);
     } catch (e) {
         typeOutput("ERROR: Snake failed to start!\n(・_・;) Твой 486-й сгорел?");
     }
