@@ -340,8 +340,14 @@ function startSnake() {
         snakeFood = randomFood();
         drawSnake();
         gameControls.style.display = 'flex';
-        const fireBtn = gameControls.querySelector('[data-dir="fire"]');
-        if (fireBtn) fireBtn.style.display = 'none';
+        const btnUp = gameControls.querySelector('[data-dir="up"]');
+        const btnDown = gameControls.querySelector('[data-dir="down"]');
+        const btnLeft = gameControls.querySelector('[data-dir="left"]');
+        const btnRight = gameControls.querySelector('[data-dir="right"]');
+        if (btnUp) btnUp.style.display = '';
+        if (btnDown) btnDown.style.display = '';
+        if (btnLeft) btnLeft.style.display = '';
+        if (btnRight) btnRight.style.display = '';
         clearInterval(snakeInterval);
         snakeInterval = setInterval(moveSnake, 150);
     } catch (e) {
@@ -508,8 +514,14 @@ function startTetris() {
         newTetrisPiece();
         drawTetris();
         gameControls.style.display = 'flex';
-        const fireBtn = gameControls.querySelector('[data-dir="fire"]');
-        if (fireBtn) fireBtn.style.display = 'none';
+        const btnUp = gameControls.querySelector('[data-dir="up"]');
+        const btnDown = gameControls.querySelector('[data-dir="down"]');
+        const btnLeft = gameControls.querySelector('[data-dir="left"]');
+        const btnRight = gameControls.querySelector('[data-dir="right"]');
+        if (btnUp) btnUp.style.display = '';
+        if (btnDown) btnDown.style.display = '';
+        if (btnLeft) btnLeft.style.display = '';
+        if (btnRight) btnRight.style.display = '';
         clearInterval(tetrisInterval);
         tetrisInterval = setInterval(moveTetris, 400);
     } catch (e) {
@@ -549,7 +561,7 @@ function drawInvaders() {
         gameField.className = 'game-field';
         const pre = document.createElement('pre');
         pre.style.cssText = "margin:0; font-family:'Courier New', monospace; font-size:inherit; line-height:1; letter-spacing:0; background:none; border:none; padding:0; text-align:left;";
-        pre.textContent = `Space Invaders (стрелки/кнопки/свайпы, огонь: пробел/▄︻デ╦︻)\nПодсчёт: ${invadersScore} | Жизни: ${invadersLives}\n╔${"═".repeat(invadersW)}╗\n${field.map(r => "║" + r.join('') + "║").join('\n')}\n╚${"═".repeat(invadersW)}╝\n${invadersScore > 500 ? "(¬‿¬) Ты военно-космический асс!" : "(ಠ_ಠ) Спаси Землю, хацкер!"}`;
+        pre.textContent = `Space Invaders (стрелки/кнопки/свайпы, огонь: пробел/стрелка вверх)\nПодсчёт: ${invadersScore} | Жизни: ${invadersLives}\n╔${"═".repeat(invadersW)}╗\n${field.map(r => "║" + r.join('') + "║").join('\n')}\n╚${"═".repeat(invadersW)}╝\n${invadersScore > 500 ? "(¬‿¬) Ты военно-космический асс!" : "(ಠ_ಠ) Спаси Землю, хацкер!"}`;
         gameField.appendChild(pre);
         output.appendChild(gameField);
     } catch (e) {
@@ -652,10 +664,16 @@ function startInvaders() {
         initInvaders();
         drawInvaders();
         gameControls.style.display = 'flex';
-        const fireBtn = gameControls.querySelector('[data-dir="fire"]');
-        if (fireBtn) fireBtn.style.display = '';
+        const btnUp = gameControls.querySelector('[data-dir="up"]');
+        const btnDown = gameControls.querySelector('[data-dir="down"]');
+        const btnLeft = gameControls.querySelector('[data-dir="left"]');
+        const btnRight = gameControls.querySelector('[data-dir="right"]');
+        if (btnUp) btnUp.style.display = '';
+        if (btnDown) btnDown.style.display = 'none';
+        if (btnLeft) btnLeft.style.display = '';
+        if (btnRight) btnRight.style.display = '';
         clearInterval(invadersInterval);
-        invadersInterval = setInterval(moveInvaders, 500);
+        invadersInterval = setInterval(moveInvaders, 900);
     } catch (e) {
         typeOutput("ERROR: Invaders failed to start!\n(ಠ_ಠ) Твой 486-й сгорел?");
     }
@@ -764,10 +782,16 @@ function startBreakout() {
         initBreakoutBlocks();
         drawBreakout();
         gameControls.style.display = 'flex';
-        const fireBtn = gameControls.querySelector('[data-dir="fire"]');
-        if (fireBtn) fireBtn.style.display = 'none';
+        const btnUp = gameControls.querySelector('[data-dir="up"]');
+        const btnDown = gameControls.querySelector('[data-dir="down"]');
+        const btnLeft = gameControls.querySelector('[data-dir="left"]');
+        const btnRight = gameControls.querySelector('[data-dir="right"]');
+        if (btnUp) btnUp.style.display = 'none';
+        if (btnDown) btnDown.style.display = 'none';
+        if (btnLeft) btnLeft.style.display = '';
+        if (btnRight) btnRight.style.display = '';
         clearInterval(breakoutInterval);
-        breakoutInterval = setInterval(moveBreakout, 100);
+        breakoutInterval = setInterval(moveBreakout, 200);
     } catch (e) {
         typeOutput("ERROR: Breakout failed to start!\n(°Д°) Твой 486-й сгорел?");
     }
@@ -830,15 +854,11 @@ gameControls.addEventListener('click', function(e) {
             } else if (invadersActive) {
                 if (dir === 'left' && invadersPlayer[0] > 0) invadersPlayer[0]--;
                 if (dir === 'right' && invadersPlayer[0] < invadersW - 1) invadersPlayer[0]++;
-                if (dir === 'fire') {
+                if (dir === 'up') {
                     invadersBullets.push([invadersPlayer[0], invadersPlayer[1] - 1]);
                     playSound(1000, 0.05);
                 }
                 drawInvaders();
-            } else if (breakoutActive) {
-                if (dir === 'left' && breakoutPaddle[0] > 0) breakoutPaddle[0]--;
-                if (dir === 'right' && breakoutPaddle[0] < breakoutW - 3) breakoutPaddle[0]++;
-                drawBreakout();
             }
             e.target.classList.add('active');
             setTimeout(() => e.target.classList.remove('active'), 100);
