@@ -301,9 +301,177 @@ MEME.BAT    Y2K.SYS     HACKER.TXT
     tetris: () => startTetris(),
     snake: () => startSnake(),
     invaders: () => startInvaders(),
-    breakout: () => startBreakout()
+    breakout: () => startBreakout(),
+    nwrath: () => {
+        disableTypeSound = true;
+        showAnsiTentacles(true);
+        setTimeout(() => { disableTypeSound = false; }, 3500);
+    }
 };
 
+function showAnsiTentacles(isNwrath) {
+    let old = document.getElementById('ansiTentacleOverlay');
+    if (old) old.remove();
+    let overlay = document.createElement('div');
+    overlay.id = 'ansiTentacleOverlay';
+    overlay.style.position = 'fixed';
+    overlay.style.left = '0';
+    overlay.style.top = '0';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.zIndex = '99999';
+    overlay.style.pointerEvents = 'none';
+    overlay.style.background = 'none';
+    overlay.style.userSelect = 'none';
+    document.body.appendChild(overlay);
+
+    let canvas = document.createElement('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    canvas.style.display = 'block';
+    canvas.style.pointerEvents = 'none';
+    overlay.appendChild(canvas);
+    let ctx = canvas.getContext('2d');
+
+    const tentacleColors = ['#7b2ff2', '#1e90ff', '#6a5acd', '#483d8b', '#8a2be2'];
+    const tentacleCount = 7 + Math.floor(Math.random()*2);
+    const tentacles = [];
+    for (let i = 0; i < tentacleCount; i++) {
+        let side = i % 4;
+        let base, angle;
+        if (side === 0) {
+            base = {x: (canvas.width/(tentacleCount+1))*(i+1), y: 0};
+            angle = Math.PI/2 + (Math.random()-0.5)*0.7;
+        } else if (side === 1) {
+            base = {x: (canvas.width/(tentacleCount+1))*(i+1), y: canvas.height};
+            angle = -Math.PI/2 + (Math.random()-0.5)*0.7;
+        } else if (side === 2) {
+            base = {x: 0, y: (canvas.height/(tentacleCount+1))*(i+1)};
+            angle = 0 + (Math.random()-0.5)*0.7;
+        } else {
+            base = {x: canvas.width, y: (canvas.height/(tentacleCount+1))*(i+1)};
+            angle = Math.PI + (Math.random()-0.5)*0.7;
+        }
+        tentacles.push({
+            base,
+            angle,
+            phase: Math.random()*Math.PI*2,
+            len: 220+Math.random()*120,
+            color: tentacleColors[Math.floor(Math.random()*tentacleColors.length)],
+            suckers: 8+Math.floor(Math.random()*4),
+            thickness: 18-6*(i/tentacleCount)
+        });
+    }
+
+    function playGameOverMelody() {
+        const melody = [
+            [880,0.18,0.04],[830,0.16,0.04],[784,0.14,0.04],[740,0.12,0.04],[698,0.12,0.04],[659,0.12,0.04],[622,0.12,0.04],[587,0.18,0.08],
+            [523,0.22,0.08],[392,0.32,0.12],[220,0.5,0.2]
+        ];
+        let idx = 0;
+        function nextNote() {
+            if (idx >= melody.length) return;
+            let [freq, dur, pause] = melody[idx++];
+            playSound(freq, dur, idx%2===0?'triangle':'square');
+            setTimeout(nextNote, (dur+pause)*1000);
+        }
+        nextNote();
+    }
+
+    function playPiratesMelody() {
+        const melody = [
+            [659,0.16,0.04],[698,0.16,0.04],[784,0.16,0.04],[880,0.16,0.04],[988,0.16,0.04],[1047,0.16,0.04],[1175,0.16,0.04],[1319,0.16,0.08],
+            [1175,0.12,0.03],[1047,0.12,0.03],[988,0.12,0.03],[880,0.12,0.03],[784,0.12,0.03],[698,0.12,0.03],[659,0.12,0.08],
+            [784,0.16,0.04],[880,0.16,0.04],[988,0.16,0.04],[1047,0.16,0.04],[1175,0.16,0.04],[1319,0.16,0.04],[1568,0.16,0.08],
+            [1319,0.12,0.03],[1175,0.12,0.03],[1047,0.12,0.03],[988,0.12,0.03],[880,0.12,0.03],[784,0.12,0.03],[698,0.12,0.08]
+        ];
+        let idx = 0;
+        function nextNote() {
+            if (idx >= melody.length) return;
+            let [freq, dur, pause] = melody[idx++];
+            playSound(freq, dur, idx%2===0?'square':'triangle');
+            setTimeout(nextNote, (dur+pause)*1000);
+        }
+        nextNote();
+    }
+
+    if (isNwrath) {
+        playGameOverMelody();
+    } else {
+        playPiratesMelody();
+    }
+
+    let t = 0;
+    let duration = isNwrath ? 3200 : 2600;
+    let startTime = null;
+    function drawTentacles(animTime) {
+        if (!startTime) startTime = animTime;
+        let progress = (animTime - startTime) / duration;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        tentacles.forEach((tent, idx) => {
+            let points = [];
+            let segs = 22;
+            let base = tent.base;
+            let angle = tent.angle;
+            let len = tent.len * (0.7 + 0.3*Math.sin(progress*Math.PI + tent.phase));
+            let amp = 38 + 18*Math.sin(t + tent.phase + idx);
+            for (let i = 0; i <= segs; i++) {
+                let p = i/segs;
+                let wave = Math.sin(t*2 + tent.phase + p*3 + idx) * amp * Math.pow(1-p, 1.5);
+                let x = base.x + Math.cos(angle) * len * p + Math.cos(angle+Math.PI/2) * wave;
+                let y = base.y + Math.sin(angle) * len * p + Math.sin(angle+Math.PI/2) * wave;
+                points.push({x,y});
+            }
+            ctx.save();
+            let grad = ctx.createLinearGradient(points[0].x, points[0].y, points[points.length-1].x, points[points.length-1].y);
+            grad.addColorStop(0, tent.color);
+            grad.addColorStop(1, '#222');
+            ctx.strokeStyle = grad;
+            ctx.shadowColor = tent.color;
+            ctx.shadowBlur = 18;
+            ctx.lineWidth = tent.thickness;
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+            ctx.stroke();
+            ctx.restore();
+            ctx.save();
+            for (let i = 2; i < points.length-2; i+=Math.floor(segs/tent.suckers)) {
+                let r = 4+2*Math.sin(t+i);
+                let px = points[i].x + Math.cos(angle+Math.PI/2)*tent.thickness*0.5;
+                let py = points[i].y + Math.sin(angle+Math.PI/2)*tent.thickness*0.5;
+                ctx.beginPath();
+                ctx.arc(px, py, r, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.shadowColor = tent.color;
+                ctx.shadowBlur = 6;
+                ctx.fill();
+            }
+            ctx.restore();
+        });
+    }
+
+    function animate(animTime) {
+        t += 0.045;
+        drawTentacles(animTime);
+        if (isNwrath && Math.random() < 0.25) {
+            document.body.style.transform = `translate(${Math.random()*16-8}px,${Math.random()*16-8}px) rotate(${Math.random()*6-3}deg)`;
+        }
+        if (animTime - (startTime||0) < duration) {
+            requestAnimationFrame(animate);
+        } else {
+            overlay.style.transition = 'opacity 0.5s';
+            overlay.style.opacity = '0';
+            document.body.style.transform = '';
+            setTimeout(() => {
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }, 500);
+        }
+    }
+    requestAnimationFrame(animate);
+}
 function typeOutput(text, callback) {
     try {
         output.textContent = "";
@@ -1127,7 +1295,11 @@ function handleCommand(cmd) {
             input.value = "";
             return;
         }
-        typeOutput(response || "ERROR 404: Команда не найдена!\n(ಠ_ಠ) Твой 486-й сгорел, ламер?\nПопробуй help!");
+        if (!response && cmd === "nwrath") {
+            typeOutput("У деда классный БОЛЬШОЙ писюнчик © NWrath 25.07.2025");
+        } else {
+            typeOutput(response || "ERROR 404: Команда не найдена!\n(ಠ_ಠ) Твой 486-й сгорел, ламер?\nПопробуй help!");
+        }
         input.value = "";
     } catch (e) {
         typeOutput("ERROR: Command failed!\n(¬_¬) Твой 486-й сгорел?");
