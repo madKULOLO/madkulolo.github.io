@@ -1,13 +1,13 @@
 @font-face {
     font-family: 'Comic Sans MS';
-    src: url('fonts/ComicSansMS.woff2') format('woff2');
+    src: url('/fonts/ComicSansMS.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Impact';
-    src: url('fonts/Impact.woff2') format('woff2');
+    src: url('/fonts/Impact.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
