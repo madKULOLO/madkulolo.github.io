@@ -387,13 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.style.userSelect = '';
   });
 
-  if (modal) {
-    modal.addEventListener('mousedown', function(e) {
-      if (e.target === modal) {
-        hideChat();
-      }
-    });
-  }
+
 
   document.addEventListener('keydown', function(e) {
     if (chatOpen && e.key === 'Escape') {
@@ -415,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   window.addEventListener('resize', function() {
-    if (chatOpen) {
+    if (chatOpen && !isMobile()) {
       hideChat();
       openBtn.textContent = 'Открыть чат Twitch';
     }
