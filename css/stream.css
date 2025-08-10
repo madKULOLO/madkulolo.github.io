@@ -519,7 +519,7 @@ html, body {
 }
 .twitch-chat-iframe-wrap-modal {
   flex: 1 1 auto;
-  margin: 56px 0 0 0;
+  /* margin: 56px 0 0 0; */
   padding: 0;
   background: #000;
   display: flex;
