@@ -200,36 +200,94 @@ function getCurrentChannelName() {
   const sel = document.getElementById('channelSelect');
   return sel && sel.value === '1' ? 'mrrmaikl' : 'madkulolo';
 }
+
+
 document.addEventListener('DOMContentLoaded', function() {
   const openBtn = document.getElementById('openTwitchChatBtn');
-  const chatBlock = document.getElementById('twitchChatBlock');
+  const chatBlock = document.getElementById('twitchChatBlock'); // мобилка
+  const modal = document.getElementById('twitchChatModal'); // компухтер
+  const modalBlock = document.getElementById('twitchChatModalBlock');
+  const closeModalBtn = document.getElementById('closeTwitchChatModal');
+  const dragbar = document.getElementById('twitchChatModalDragbar');
+  const resizeLeft = document.getElementById('twitchChatModalResizeLeft');
+  const resizeRight = document.getElementById('twitchChatModalResizeRight');
+  const resizeTop = document.getElementById('twitchChatModalResizeTop');
+  const resizeBottom = document.getElementById('twitchChatModalResizeBottom');
   const select = document.getElementById('channelSelect');
   const phoneBtn = document.getElementById('helpPhoneBtn');
   let chatOpen = false;
+  let dragOffsetX = 0, dragOffsetY = 0, isDragging = false;
+  let isResizing = false, resizeDir = '', resizeStart = {};
+
+  function isMobile() {
+    return window.matchMedia('(max-width: 900px)').matches;
+  }
+
+
+  function setModalTheme(idx) {
+    if (!modal) return;
+    const title = document.getElementById('twitchChatModalTitle');
+    const closeIcon = document.getElementById('twitchChatModalCloseIcon');
+    if (idx === 1) {
+      modal.classList.add('suicide-theme');
+      if (title) title.innerHTML = '💀 Писать или не писать?..';
+      if (closeIcon) closeIcon.innerHTML = '<svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#a10000" stroke="#ffb0b0" stroke-width="3"/><text x="14" y="19" text-anchor="middle" font-size="18" fill="#fff">×</text></svg>';
+    } else {
+      modal.classList.remove('suicide-theme');
+      if (title) title.innerHTML = '📌 Не забыть 🗣️💊';
+      if (closeIcon) closeIcon.innerHTML = '<svg width="28" height="28" viewBox="0 0 28 28"><rect x="3" y="3" width="22" height="22" rx="8" fill="#ffff00" stroke="#ff00ff" stroke-width="3"/><text x="14" y="19" text-anchor="middle" font-size="18" fill="#a100a1">×</text></svg>';
+    }
+  }
+
   function showChat() {
-    if (!chatBlock) return;
     const channel = getCurrentChannelName();
-    chatBlock.innerHTML = '';
-    const iframe = document.createElement('iframe');
-    iframe.src = 'https://www.twitch.tv/embed/' + channel + '/chat?parent=' + location.hostname;
-    iframe.allowFullscreen = false;
-    iframe.style.width = '100%';
-    iframe.style.height = '420px';
-    iframe.style.minHeight = '320px';
-    iframe.style.maxHeight = '60vh';
-    iframe.style.display = 'block';
-    chatBlock.appendChild(iframe);
-    chatBlock.style.display = 'block';
-    openBtn.textContent = 'Скрыть чат Twitch';
+    const idx = parseInt(select.value, 10) || 0;
+    setModalTheme(idx);
+    if (isMobile()) {
+      if (!chatBlock) return;
+      chatBlock.innerHTML = '';
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://www.twitch.tv/embed/' + channel + '/chat?parent=' + location.hostname;
+      iframe.allowFullscreen = false;
+      iframe.style.width = '100%';
+      iframe.style.height = '420px';
+      iframe.style.minHeight = '320px';
+      iframe.style.maxHeight = '60vh';
+      iframe.style.display = 'block';
+      chatBlock.appendChild(iframe);
+      chatBlock.style.display = 'block';
+      openBtn.textContent = 'Скрыть чат Twitch';
+    } else {
+      if (!modal || !modalBlock) return;
+      modalBlock.innerHTML = '';
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://www.twitch.tv/embed/' + channel + '/chat?parent=' + location.hostname;
+      iframe.allowFullscreen = false;
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.display = 'block';
+      modalBlock.appendChild(iframe);
+      modal.classList.add('open');
+      openBtn.textContent = 'Скрыть чат Twitch';
+    }
     chatOpen = true;
   }
+
   function hideChat() {
-    if (!chatBlock) return;
-    chatBlock.innerHTML = '';
-    chatBlock.style.display = 'none';
-    openBtn.textContent = 'Открыть чат Twitch';
+    if (isMobile()) {
+      if (!chatBlock) return;
+      chatBlock.innerHTML = '';
+      chatBlock.style.display = 'none';
+      openBtn.textContent = 'Открыть чат Twitch';
+    } else {
+      if (!modal || !modalBlock) return;
+      modalBlock.innerHTML = '';
+      modal.classList.remove('open');
+      openBtn.textContent = 'Открыть чат Twitch';
+    }
     chatOpen = false;
   }
+
   openBtn.onclick = function() {
     if (chatOpen) {
       hideChat();
@@ -237,18 +295,131 @@ document.addEventListener('DOMContentLoaded', function() {
       showChat();
     }
   };
+
+  if (closeModalBtn) {
+    closeModalBtn.onclick = function() {
+      hideChat();
+    };
+  }
+
+  if (dragbar && modal) {
+    dragbar.addEventListener('mousedown', function(e) {
+      if (isMobile()) return;
+      isDragging = true;
+      const rect = modal.getBoundingClientRect();
+      dragOffsetX = e.clientX - rect.left;
+      dragOffsetY = e.clientY - rect.top;
+      document.body.style.userSelect = 'none';
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (isDragging && modal) {
+        let x = e.clientX - dragOffsetX;
+        let y = e.clientY - dragOffsetY;
+        x = Math.max(0, Math.min(window.innerWidth - modal.offsetWidth, x));
+        y = Math.max(0, Math.min(window.innerHeight - modal.offsetHeight, y));
+        modal.style.left = x + 'px';
+        modal.style.top = y + 'px';
+        modal.style.right = 'auto';
+      }
+    });
+    document.addEventListener('mouseup', function() {
+      isDragging = false;
+      document.body.style.userSelect = '';
+    });
+  }
+
+
+  function startResize(dir, e) {
+    if (isMobile()) return;
+    isResizing = true;
+    resizeDir = dir;
+    resizeStart = {
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      width: modal.offsetWidth,
+      height: modal.offsetHeight,
+      left: modal.offsetLeft,
+      top: modal.offsetTop
+    };
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  }
+
+  if (resizeLeft && modal) resizeLeft.addEventListener('mousedown', e => startResize('left', e));
+  if (resizeRight && modal) resizeRight.addEventListener('mousedown', e => startResize('right', e));
+  if (resizeTop && modal) resizeTop.addEventListener('mousedown', e => startResize('top', e));
+  if (resizeBottom && modal) resizeBottom.addEventListener('mousedown', e => startResize('bottom', e));
+
+  document.addEventListener('mousemove', function(e) {
+    if (isResizing && modal) {
+      let minW = 320, minH = 320, maxW = window.innerWidth - 8, maxH = window.innerHeight - 8;
+      let newW = resizeStart.width, newH = resizeStart.height, newLeft = resizeStart.left, newTop = resizeStart.top;
+      if (resizeDir === 'right') {
+        newW = Math.max(minW, Math.min(maxW - modal.offsetLeft, resizeStart.width + (e.clientX - resizeStart.mouseX)));
+      } else if (resizeDir === 'left') {
+        let delta = e.clientX - resizeStart.mouseX;
+        newW = Math.max(minW, Math.min(maxW, resizeStart.width - delta));
+        newLeft = Math.min(resizeStart.left + delta, resizeStart.left + resizeStart.width - minW);
+        if (newLeft < 8) {
+          newW = newW - (8 - newLeft);
+          newLeft = 8;
+        }
+      } else if (resizeDir === 'bottom') {
+        newH = Math.max(minH, Math.min(maxH - modal.offsetTop, resizeStart.height + (e.clientY - resizeStart.mouseY)));
+      } else if (resizeDir === 'top') {
+        let delta = e.clientY - resizeStart.mouseY;
+        newH = Math.max(minH, Math.min(maxH, resizeStart.height - delta));
+        newTop = Math.min(resizeStart.top + delta, resizeStart.top + resizeStart.height - minH);
+        if (newTop < 8) {
+          newH = newH - (8 - newTop);
+          newTop = 8;
+        }
+      }
+      if (resizeDir === 'left') modal.style.left = newLeft + 'px';
+      if (resizeDir === 'top') modal.style.top = newTop + 'px';
+      modal.style.width = newW + 'px';
+      modal.style.height = newH + 'px';
+    }
+  });
+  document.addEventListener('mouseup', function() {
+    isResizing = false;
+    resizeDir = '';
+    document.body.style.userSelect = '';
+  });
+
+  if (modal) {
+    modal.addEventListener('mousedown', function(e) {
+      if (e.target === modal) {
+        hideChat();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (chatOpen && e.key === 'Escape') {
+      hideChat();
+    }
+  });
+
   select.addEventListener('change', function() {
     if (chatOpen) showChat();
   });
+
   if (phoneBtn) {
     phoneBtn.addEventListener('click', function(e) {
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (!isMobile) {
+      if (!isMobile()) {
         e.preventDefault();
         window.open('https://telefon-doveria.ru/', '_blank');
       }
     });
   }
+
+  window.addEventListener('resize', function() {
+    if (chatOpen) {
+      hideChat();
+      openBtn.textContent = 'Открыть чат Twitch';
+    }
+  });
 
   const commandSearch = document.getElementById('commandSearch');
   if (commandSearch) {
