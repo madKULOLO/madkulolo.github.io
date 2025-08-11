@@ -166,22 +166,22 @@ function switchChannel(idx) {
         // }
         
         // --- Servers RTMPS ---
-        // if (embedDiv) {
-        //   embedDiv.innerHTML = '';
-        //   const iframe = document.createElement('iframe');
-        //   if (idx === 0) {
-        //     iframe.setAttribute('src', 'https://stream.deduso.su/0cd70214-4b93-45ef-a673-b66fab86a296.html'); // дед
-        //   } else {
-        //     iframe.setAttribute('src', 'https://stream.deduso.su/9f3dda91-feed-452d-aec7-9171d404109e.html'); // кабина
-        //   }
-        //   iframe.setAttribute('frameborder', '0');
-        //   iframe.setAttribute('allowfullscreen', 'true');
-        //   iframe.setAttribute('scrolling', 'no');
-        //   iframe.style.width = '100%';
-        //   iframe.style.aspectRatio = '16/9';
-        //   iframe.style.height = '';
-        //   embedDiv.appendChild(iframe);
-        // }
+        if (embedDiv) {
+          embedDiv.innerHTML = '';
+          const iframe = document.createElement('iframe');
+          if (idx === 0) {
+            iframe.setAttribute('src', 'https://stream.deduso.su/0cd70214-4b93-45ef-a673-b66fab86a296.html'); // дед
+          } else {
+            iframe.setAttribute('src', 'https://stream.deduso.su/9f3dda91-feed-452d-aec7-9171d404109e.html'); // кабина
+          }
+          iframe.setAttribute('frameborder', '0');
+          iframe.setAttribute('allowfullscreen', 'true');
+          iframe.setAttribute('scrolling', 'no');
+          iframe.style.width = '100%';
+          iframe.style.aspectRatio = '16/9';
+          iframe.style.height = '';
+          embedDiv.appendChild(iframe);
+        }
         // --- Servers RTMPS ---
   setTheme(idx);
   setContent(idx);
