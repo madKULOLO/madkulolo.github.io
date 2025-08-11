@@ -68,6 +68,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   player.language('ru');
+
+  function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+  if (isMobileDevice()) {
+    var videoEl = document.getElementById('videojs-player');
+    var playedOnce = false;
+    var tryPlay = function() {
+      if (!playedOnce && player.paused()) {
+        player.play().catch(function(){});
+        playedOnce = true;
+      }
+    };
+    videoEl.addEventListener('touchend', tryPlay, { once: true });
+    videoEl.addEventListener('click', tryPlay, { once: true });
+  }
   var select = document.getElementById('channelSelect');
   function setChannelSource(idx) {
     var src = idx === 1
