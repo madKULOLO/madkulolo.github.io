@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
       iframe.style.maxHeight = '60vh';
       iframe.style.display = 'block';
       chatBlock.appendChild(iframe);
-      chatBlock.style.visibility = 'visible'; 
+      chatBlock.style.display = 'block';
       openBtn.textContent = 'Скрыть чат Twitch';
     } else {
       if (!modal || !modalBlock) return;
@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isMobile()) {
       if (!chatBlock) return;
       chatBlock.innerHTML = '';
-      chatBlock.style.visibility = 'hidden'; 
+      chatBlock.style.display = 'none';
       openBtn.textContent = 'Открыть чат Twitch';
     } else {
       if (!modal || !modalBlock) return;
