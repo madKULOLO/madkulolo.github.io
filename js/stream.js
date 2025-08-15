@@ -40,8 +40,198 @@ const socialLinks = document.getElementById('socialLinks');
 const playerContainer = document.getElementById('playerContainer');
 const channelSwitcher = document.getElementById('channelSwitcher');
 
+
+const CLIENT_ID = '5ivtmm2oqik8tq57qxbxkl2nwju1ew'; 
+const REDIRECT_URI = window.location.origin + window.location.pathname;
+
+let tmiClient = null;
+const chatContainerDesktop = document.getElementById('customChatDesktop');
+const chatContainerMobile = document.getElementById('customChatMobile');
+let isFirstMessage = true;
+let userInfo = {}; 
+
+const chatControlsDesktop = document.getElementById('chatControlsDesktop');
+const chatControlsMobile = document.getElementById('chatControlsMobile');
+const loginButtons = document.querySelectorAll('.chat-login-btn');
+const sendForms = document.querySelectorAll('.chat-send-form');
+
+function twitchLogin() {
+    const scopes = 'chat:read chat:edit';
+    const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${scopes}`;
+    window.location.href = authUrl;
+}
+
+function handleAuthRedirect() {
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+
+    if (accessToken) {
+        localStorage.setItem('twitch_access_token', accessToken);
+        history.pushState("", document.title, window.location.pathname + window.location.search);
+        return accessToken;
+    }
+    return null;
+}
+
+async function fetchUserInfo(token) {
+    try {
+        const response = await fetch('https://api.twitch.tv/helix/users', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Client-Id': CLIENT_ID
+            }
+        });
+        const data = await response.json();
+        if (data.data && data.data.length > 0) {
+            const user = data.data[0];
+            userInfo = {
+                login: user.login,
+                displayName: user.display_name,
+                id: user.id
+            };
+            localStorage.setItem('twitch_user_info', JSON.stringify(userInfo));
+        }
+    } catch (error) {
+        console.error("Ошибка при получении информации о пользователе:", error);
+        logout();
+    }
+}
+
+function logout() {
+    localStorage.removeItem('twitch_access_token');
+    localStorage.removeItem('twitch_user_info');
+    userInfo = {};
+    updateUIForLoginState();
+}
+
+function updateUIForLoginState() {
+    const token = localStorage.getItem('twitch_access_token');
+    if (token && userInfo.login) {
+        chatControlsDesktop.querySelector('.chat-login-wrapper').style.display = 'none';
+        chatControlsMobile.querySelector('.chat-login-wrapper').style.display = 'none';
+        chatControlsDesktop.querySelector('.chat-send-form').style.display = 'flex';
+        chatControlsMobile.querySelector('.chat-send-form').style.display = 'flex';
+    } else {
+        chatControlsDesktop.querySelector('.chat-login-wrapper').style.display = 'flex';
+        chatControlsMobile.querySelector('.chat-login-wrapper').style.display = 'flex';
+        chatControlsDesktop.querySelector('.chat-send-form').style.display = 'none';
+        chatControlsMobile.querySelector('.chat-send-form').style.display = 'none';
+    }
+    switchChannel(parseInt(select.value, 10));
+}
+
+
+function displayMessage(tags, message) {
+    if (isFirstMessage) {
+        chatContainerDesktop.innerHTML = '';
+        chatContainerMobile.innerHTML = '';
+        isFirstMessage = false;
+    }
+
+    if (!chatContainerDesktop || !chatContainerMobile) return;
+
+    const messageElement = document.createElement('div');
+    messageElement.className = 'chat-message';
+
+    const usernameElement = document.createElement('span');
+    usernameElement.className = 'chat-username';
+    usernameElement.textContent = `${tags['display-name']}: `;
+    usernameElement.style.color = tags.color || (select.value === '1' ? '#ffb0b0' : '#a100a1');
+    messageElement.appendChild(usernameElement);
+
+    const messageTextElement = document.createElement('span');
+    messageTextElement.className = 'chat-message-text';
+
+    const emotes = tags.emotes || {};
+    const messageParts = [];
+    let lastIndex = 0;
+
+    const sortedEmoteKeys = Object.keys(emotes).sort((a, b) => {
+        const a_pos = parseInt(emotes[a][0].split('-')[0]);
+        const b_pos = parseInt(emotes[b][0].split('-')[0]);
+        return a_pos - b_pos;
+    });
+
+    sortedEmoteKeys.forEach(emoteId => {
+        emotes[emoteId].forEach(position => {
+            const [start, end] = position.split('-').map(Number);
+            if (start > lastIndex) {
+                messageParts.push(document.createTextNode(message.substring(lastIndex, start)));
+            }
+            const emoteImg = document.createElement('img');
+            emoteImg.src = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/1.0`;
+            emoteImg.alt = message.substring(start, end + 1);
+            emoteImg.className = 'emote';
+            messageParts.push(emoteImg);
+            lastIndex = end + 1;
+        });
+    });
+
+    if (lastIndex < message.length) {
+        messageParts.push(document.createTextNode(message.substring(lastIndex)));
+    }
+    
+    messageParts.forEach(part => messageTextElement.appendChild(part));
+    messageElement.appendChild(messageTextElement);
+    
+    chatContainerDesktop.appendChild(messageElement.cloneNode(true));
+    chatContainerMobile.appendChild(messageElement);
+
+    chatContainerDesktop.scrollTop = chatContainerDesktop.scrollHeight;
+    chatContainerMobile.scrollTop = chatContainerMobile.scrollHeight;
+}
+
+function connectToChat(channelName) {
+    if (tmiClient) {
+        tmiClient.disconnect();
+    }
+    
+    isFirstMessage = true;
+
+    const token = localStorage.getItem('twitch_access_token');
+    let clientOptions = {
+        options: { debug: false },
+        channels: [channelName]
+    };
+
+    if (token && userInfo.login) {
+        clientOptions.identity = {
+            username: userInfo.login,
+            password: `oauth:${token}`
+        };
+        const connectedMsg = `<div class="chat-message system-message">Вы вошли как ${userInfo.displayName}.</div>`;
+        if (chatContainerDesktop) chatContainerDesktop.innerHTML = connectedMsg;
+        if (chatContainerMobile) chatContainerMobile.innerHTML = connectedMsg;
+
+    } else {
+        const connectingMsg = '<div class="chat-message system-message">Чат (только чтение). Войдите, чтобы писать.</div>';
+        if (chatContainerDesktop) chatContainerDesktop.innerHTML = connectingMsg;
+        if (chatContainerMobile) chatContainerMobile.innerHTML = connectingMsg;
+    }
+
+    tmiClient = new tmi.Client(clientOptions);
+    
+    tmiClient.on('message', (channel, tags, message, self) => {
+        displayMessage(tags, message);
+    });
+
+    tmiClient.connect().catch(err => {
+        console.error("Ошибка подключения к чату:", err);
+        if (String(err).includes("Login authentication failed")) {
+             logout();
+        }
+        const errorMsg = `<div class="chat-message system-message error">Не удалось подключиться к чату.</div>`;
+        if (chatContainerDesktop) chatContainerDesktop.innerHTML = errorMsg;
+        if (chatContainerMobile) chatContainerMobile.innerHTML = errorMsg;
+    });
+}
+
 function setTheme(idx) {
   const channelLabel = document.getElementById('channelLabel');
+  const chatModal = document.getElementById('twitchChatModal');
+  const chatBlock = document.getElementById('twitchChatBlock');
+
   if (idx === 1) {
     document.body.classList.add('suicide-theme');
     container.classList.add('suicide-theme');
@@ -51,6 +241,8 @@ function setTheme(idx) {
     socialLinks.classList.add('suicide-theme');
     playerContainer.classList.add('suicide-theme');
     channelSwitcher.classList.add('suicide-theme');
+    if (chatModal) chatModal.classList.add('suicide-theme');
+    if (chatBlock) chatBlock.classList.add('suicide-theme');
     
     document.body.style.background = 'radial-gradient(ellipse at center, #232323 0%, #181818 100%)';
     channelLabel.style.color = '#a10000';
@@ -63,6 +255,8 @@ function setTheme(idx) {
     socialLinks.classList.remove('suicide-theme');
     playerContainer.classList.remove('suicide-theme');
     channelSwitcher.classList.remove('suicide-theme');
+    if (chatModal) chatModal.classList.remove('suicide-theme');
+    if (chatBlock) chatBlock.classList.remove('suicide-theme');
     
     document.body.style.background = 'radial-gradient(circle at 60% 40%, #ffccff 0%, #ffff00 100%)';
     channelLabel.style.color = '#222';
@@ -136,60 +330,30 @@ function setAnimations(idx) {
 
 function switchChannel(idx) {
   const embedDiv = document.getElementById('playerTwitchEmbed');
-  const chatBlock = document.getElementById('twitchChatBlock');
-        // --- Twitch embed code ---
-        // const channelName = idx === 0 ? 'madkulolo' : 'mrrmaikl';
+  const channelName = idx === 0 ? 'madkulolo' : 'mrrmaikl';
+  connectToChat(channelName);
         
-        // if (embedDiv) {
-        //   embedDiv.innerHTML = '';
-        //   const iframe = document.createElement('iframe');
-        //   iframe.setAttribute('src', 'https://player.twitch.tv/?channel=' + channelName + '&parent=' + location.hostname + '&autoplay=true');
-        //   iframe.setAttribute('frameborder', '0');
-        //   iframe.setAttribute('allowfullscreen', 'true');
-        //   iframe.setAttribute('scrolling', 'no');
-        //   iframe.style.width = '100%';
-        //   iframe.style.aspectRatio = '16/9';
-        //   iframe.style.height = '';
-        //   embedDiv.appendChild(iframe);
-        // }
-        // if (chatBlock && chatBlock.style.display !== 'none') {
-        //   chatBlock.innerHTML = '';
-        //   const chatIframe = document.createElement('iframe');
-        //   chatIframe.setAttribute('src', 'https://www.twitch.tv/embed/' + channelName + '/chat?parent=' + location.hostname);      
-        //   chatIframe.setAttribute('frameborder', '0');
-        //   chatIframe.style.width = '100%';
-        //   chatIframe.style.height = '420px';
-        //   chatIframe.style.minHeight = '320px';
-        //   chatIframe.style.maxHeight = '60vh';
-        //   chatIframe.style.display = 'block';
-        //   chatBlock.appendChild(chatIframe);
-        // }
-        
-        // --- Servers RTMPS ---
-        if (embedDiv) {
-          embedDiv.innerHTML = '';
-          const iframe = document.createElement('iframe');
-          if (idx === 0) {
-            iframe.setAttribute('src', 'https://stream.deduso.su/0cd70214-4b93-45ef-a673-b66fab86a296.html'); // дед
-          } else {
-            iframe.setAttribute('src', 'https://stream.deduso.su/9f3dda91-feed-452d-aec7-9171d404109e.html'); // кабина
-          }
-          iframe.setAttribute('frameborder', '0');
-          iframe.setAttribute('allowfullscreen', 'true');
-          iframe.setAttribute('scrolling', 'no');
-          iframe.style.width = '100%';
-          iframe.style.aspectRatio = '16/9';
-          iframe.style.height = '';
-          embedDiv.appendChild(iframe);
-        }
-        // --- Servers RTMPS ---
+  if (embedDiv) {
+      embedDiv.innerHTML = '';
+      const iframe = document.createElement('iframe');
+      if (idx === 0) {
+        iframe.setAttribute('src', 'https://stream.deduso.su/0cd70214-4b93-45ef-a673-b66fab86a296.html');
+      } else {
+        iframe.setAttribute('src', 'https://stream.deduso.su/9f3dda91-feed-452d-aec7-9171d404109e.html');
+      }
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allowfullscreen', 'true');
+      iframe.setAttribute('scrolling', 'no');
+      iframe.style.width = '100%';
+      iframe.style.aspectRatio = '16/9';
+      iframe.style.height = '';
+      embedDiv.appendChild(iframe);
+  }
+  
   setTheme(idx);
   setContent(idx);
   setAnimations(idx);
 }
-
-let idx = parseInt(select.value, 10) || 0;
-switchChannel(idx);
 
 select.addEventListener('change', function() {
   idx = parseInt(this.value);
@@ -202,11 +366,26 @@ function getCurrentChannelName() {
 }
 
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    let token = handleAuthRedirect();
+    if (!token) {
+        token = localStorage.getItem('twitch_access_token');
+    }
+
+    const storedUserInfo = localStorage.getItem('twitch_user_info');
+    if (token) {
+        if (storedUserInfo) {
+            userInfo = JSON.parse(storedUserInfo);
+        } else {
+            await fetchUserInfo(token);
+        }
+    }
+    updateUIForLoginState();
+
+
   const openBtn = document.getElementById('openTwitchChatBtn');
-  const chatBlock = document.getElementById('twitchChatBlock'); // мобилка
-  const modal = document.getElementById('twitchChatModal'); // компухтер
-  const modalBlock = document.getElementById('twitchChatModalBlock');
+  const chatBlock = document.getElementById('twitchChatBlock');
+  const modal = document.getElementById('twitchChatModal');
   const closeModalBtn = document.getElementById('closeTwitchChatModal');
   const dragbar = document.getElementById('twitchChatModalDragbar');
   const resizeLeft = document.getElementById('twitchChatModalResizeLeft');
@@ -222,7 +401,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function isMobile() {
     return window.matchMedia('(max-width: 900px)').matches;
   }
-
 
   function setModalTheme(idx) {
     if (!modal) return;
@@ -240,33 +418,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function showChat() {
-    const channel = getCurrentChannelName();
     const idx = parseInt(select.value, 10) || 0;
     setModalTheme(idx);
     if (isMobile()) {
       if (!chatBlock) return;
-      chatBlock.innerHTML = '';
-      const iframe = document.createElement('iframe');
-      iframe.src = 'https://www.twitch.tv/embed/' + channel + '/chat?parent=' + location.hostname;
-      iframe.allowFullscreen = false;
-      iframe.style.width = '100%';
-      iframe.style.height = '420px';
-      iframe.style.minHeight = '320px';
-      iframe.style.maxHeight = '60vh';
-      iframe.style.display = 'block';
-      chatBlock.appendChild(iframe);
-      chatBlock.style.display = 'block';
+      chatBlock.style.display = 'flex';
       openBtn.textContent = 'Скрыть чат Twitch';
     } else {
-      if (!modal || !modalBlock) return;
-      modalBlock.innerHTML = '';
-      const iframe = document.createElement('iframe');
-      iframe.src = 'https://www.twitch.tv/embed/' + channel + '/chat?parent=' + location.hostname;
-      iframe.allowFullscreen = false;
-      iframe.style.width = '100%';
-      iframe.style.height = '100%';
-      iframe.style.display = 'block';
-      modalBlock.appendChild(iframe);
+      if (!modal) return;
       modal.classList.add('open');
       openBtn.textContent = 'Скрыть чат Twitch';
     }
@@ -276,12 +435,10 @@ document.addEventListener('DOMContentLoaded', function() {
   function hideChat() {
     if (isMobile()) {
       if (!chatBlock) return;
-      chatBlock.innerHTML = '';
       chatBlock.style.display = 'none';
       openBtn.textContent = 'Открыть чат Twitch';
     } else {
-      if (!modal || !modalBlock) return;
-      modalBlock.innerHTML = '';
+      if (!modal) return;
       modal.classList.remove('open');
       openBtn.textContent = 'Открыть чат Twitch';
     }
@@ -387,16 +544,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.style.userSelect = '';
   });
 
-
-
   document.addEventListener('keydown', function(e) {
     if (chatOpen && e.key === 'Escape') {
       hideChat();
     }
-  });
-
-  select.addEventListener('change', function() {
-    if (chatOpen) showChat();
   });
 
   if (phoneBtn) {
@@ -524,6 +675,24 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   }
+
+    loginButtons.forEach(btn => {
+        btn.addEventListener('click', twitchLogin);
+    });
+
+    sendForms.forEach(form => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = form.querySelector('.chat-input');
+            const message = input.value.trim();
+            const channel = getCurrentChannelName();
+
+            if (message && tmiClient && tmiClient.readyState() === 'OPEN') {
+                tmiClient.say(channel, message);
+                input.value = '';
+            }
+        });
+    });
 });
 
 const openCommandsBtn = document.getElementById('openCommandsBtn');
@@ -560,18 +729,12 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    if (openCommandsBtn) {
-        openCommandsBtn.innerHTML = '📜CUMанды💦';
-    }
-});
-
 function copyToClipboard(text) {
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(function() {
       showCopyNotification();
     }).catch(function(err) {
-      alert('Ошибка копирования: ' + err);
+      console.error('Ошибка копирования:', err);
     });
   } else {
     try {
@@ -583,7 +746,7 @@ function copyToClipboard(text) {
       document.body.removeChild(textarea);
       showCopyNotification();
     } catch (err) {
-      alert('Ошибка копирования: ' + err);
+      console.error('Ошибка копирования (fallback):', err);
     }
   }
 }

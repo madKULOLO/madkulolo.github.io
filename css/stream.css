@@ -39,7 +39,6 @@
   box-shadow: none !important;
 }
 .twitch-chat-modal-resize-top { 
-/* .twitch-chat-modal-resize-bottom, не забыть удалить или пофиксить низ */
   left: 50%;
   width: 80px;
   height: 22px;
@@ -52,11 +51,7 @@
 .twitch-chat-modal-resize-top {
   top: -10px;
 }
-/* .twitch-chat-modal-resize-bottom { 
-  bottom: -10px;
-} */
 .twitch-chat-modal-resize-top::after { 
-/* .twitch-chat-modal-resize-bottom::after, не забыть удалить или пофиксить низ */
   content: '';
   display: block;
   width: 48px;
@@ -67,7 +62,6 @@
   box-shadow: 0 1px 6px #0002;
 }
 .twitch-chat-modal.suicide-theme .twitch-chat-modal-resize-top::after { 
-/* .twitch-chat-modal.suicide-theme .twitch-chat-modal-resize-bottom::after, не забыть удалить или пофиксить низ */
   background: repeating-linear-gradient(90deg, #a10000 0 8px, #a00000 8px 16px) !important;
 }
 html, body {
@@ -99,36 +93,6 @@ html, body {
 .twitch-chat-modal-resize-right {
   right: 0;
 }
-/* --- было бы конечно классно внизу по-центру полоску, нооо, ниже вся моя боль --- */
-/* .twitch-chat-modal-resize-bottom-visible {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 22px;
-  z-index: 9999;
-  cursor: ns-resize;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  pointer-events: auto;
-}
-.twitch-chat-modal-resize-bottom-visible::after {
-  content: '';
-  display: block;
-  width: 48px;
-  height: 7px;
-  margin-bottom: 5px;
-  border-radius: 4px;
-  background: repeating-linear-gradient(90deg, #ff00ff 0 8px, #ffff00 8px 16px);
-  opacity: 0.85;
-  box-shadow: 0 1px 6px #0002;
-}
-.twitch-chat-modal.suicide-theme .twitch-chat-modal-resize-bottom-visible::after {
-  background: repeating-linear-gradient(90deg, #a10000 0 8px, #ffb0b0 8px 16px) !important;
-} */
-/* --- Нижняя полоска, рот её ебал, перфекционист погиб --- */
 .twitch-chat-modal-resize-corner {
   position: absolute;
   right: 0;
@@ -175,7 +139,6 @@ html, body {
 .twitch-chat-modal-resize-right {
   background: transparent !important;
 }
-/* --- ебал я рот этого модального, когда нить пофикшу, а пока костыл --- */
 .twitch-chat-modal-resize {
   position: absolute;
   z-index: 10;
@@ -183,18 +146,10 @@ html, body {
 }
 .twitch-chat-modal-resize-top {
   top: 0;
-  /* left: 0; */
   width: 100%;
   height: 10px;
   cursor: ns-resize;
 }
-/* .twitch-chat-modal-resize-bottom {
-  bottom: 20%;
-  left: 0;
-  width: 100%;
-  height: 12px;
-  cursor: ns-resize;
-} */
 .twitch-chat-modal-resize-left {
   top: 50%;
   left: 0;
@@ -311,44 +266,6 @@ html, body {
   text-shadow: 1px 1px 0 #000, 0 0 8px #a1000033 !important;
   font-family: 'Impact', fantasy !important;
 }
-.twitch-chat-modal-close {
-  font-size: 2.1rem;
-  color: #ff00ff;
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-left: 12px;
-  transition: color 0.2s, transform 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px #ff00ff22;
-}
-.twitch-chat-modal-close:hover {
-  color: #00ffea;
-  background: #fffbe9;
-  transform: rotate(-15deg) scale(1.1);
-}
-.twitch-chat-modal.suicide-theme .twitch-chat-modal-close {
-  color: #a10000 !important;
-  background: #232323 !important;
-  box-shadow: 0 2px 8px #a1000022 !important;
-}
-.twitch-chat-modal.suicide-theme .twitch-chat-modal-close:hover {
-  color: #ffb0b0 !important;
-  background: #a10000 !important;
-}
-.twitch-chat-modal-close span {
-  font-size: 1.5em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
 .twitch-chat-modal {
   display: none;
   position: fixed;
@@ -379,52 +296,9 @@ html, body {
 .twitch-chat-modal.open {
   display: block;
 }
-.twitch-chat-modal-dragbar {
-  width: 100%;
-  height: 38px;
-  background: linear-gradient(90deg, #ffccff 0%, #ffff00 100%);
-  border-bottom: 2px solid #ff00ff;
-  border-radius: 32px 32px 0 0;
-  cursor: move;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  user-select: none;
-  font-family: 'Comic Sans MS', cursive;
-  font-size: 1.2rem;
-  color: #a100a1;
-}
-.twitch-chat-modal.suicide-theme .twitch-chat-modal-dragbar {
-  background: #232323 !important;
-  border-bottom: 2px solid #a10000 !important;
-  color: #ffb0b0 !important;
-  font-family: 'Impact', fantasy !important;
-}
-.twitch-chat-modal-title {
-  flex: 1 1 auto;
-  text-align: left;
-  font-weight: bold;
-  padding-left: 2px;
-}
-.twitch-chat-modal-close {
-  font-size: 2rem;
-  color: #ff00ff;
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-left: 12px;
-  transition: color 0.2s;
-}
-.twitch-chat-modal.suicide-theme .twitch-chat-modal-close {
-  color: #a10000 !important;
-}
-.twitch-chat-modal-close:hover {
-  color: #00ffea;
-}
 .twitch-chat-modal-content {
   width: 100%;
-  height: calc(100% - 38px);
+  height: calc(100% - 44px);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -437,19 +311,12 @@ html, body {
   height: 100%;
   background: #000;
   display: flex;
+  flex-direction: column; /* Changed to column */
   align-items: stretch;
   justify-content: stretch;
 }
 .twitch-chat-modal.suicide-theme .twitch-chat-iframe-wrap-modal {
   background: #232323 !important;
-}
-.twitch-chat-iframe-wrap-modal iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: #000;
-  border-radius: 0;
-  display: block;
 }
 .twitch-chat-modal-resize {
   position: absolute;
@@ -471,69 +338,6 @@ html, body {
 }
 .twitch-chat-modal.suicide-theme .twitch-chat-modal-resize:after {
   background: url('data:image/svg+xml;utf8,<svg width="28" height="28" xmlns="http://www.w3.org/2000/svg"><line x1="6" y1="22" x2="22" y2="6" stroke="%23a10000" stroke-width="3"/><line x1="12" y1="26" x2="26" y2="12" stroke="%23ffb0b0" stroke-width="2"/></svg>') no-repeat center center;
-}
-@media (max-width: 900px) {
-  .twitch-chat-modal {
-    display: none !important;
-  }
-}
-.twitch-chat-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 480px;
-  max-width: 40vw;
-  height: 100vh;
-  background: rgba(30,30,30,0.98);
-  box-shadow: -4px 0 32px #0008;
-  z-index: 3000;
-  animation: fadeIn 0.2s;
-}
-.twitch-chat-modal.open {
-  display: block;
-}
-.twitch-chat-modal-content {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: none;
-  padding: 0;
-}
-.twitch-chat-modal-close {
-  position: absolute;
-  top: 12px;
-  right: 18px;
-  font-size: 2.2rem;
-  color: #ff00ff;
-  background: none;
-  border: none;
-  cursor: pointer;
-  z-index: 10;
-  transition: color 0.2s;
-}
-.twitch-chat-modal-close:hover {
-  color: #00ffea;
-}
-.twitch-chat-iframe-wrap-modal {
-  flex: 1 1 auto;
-  /* margin: 56px 0 0 0; */
-  padding: 0;
-  background: #000;
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-  height: calc(100% - 56px);
-}
-.twitch-chat-iframe-wrap-modal iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: #000;
-  border-radius: 0 0 0 0;
-  display: block;
 }
 @media (max-width: 900px) {
   .twitch-chat-modal {
@@ -987,22 +791,14 @@ h2.suicide-theme {
   box-shadow: 0 0 20px #ff00ff;
   padding: 0;
   display: flex;
+  flex-direction: column; 
   justify-content: center;
-  align-items: flex-start;
+  align-items: stretch; 
   overflow: hidden;
   transition: border 0.3s, box-shadow 0.3s;
-}
-.twitch-chat-iframe-wrap iframe {
-  width: 100%;
   height: 420px;
   min-height: 320px;
   max-height: 60vh;
-  border: none;
-  background: #000;
-  border-radius: 12px;
-  box-shadow: none;
-  margin: 0;
-  display: block;
 }
 .suicide-theme .twitch-chat-iframe-wrap {
   border: 2px solid #a10000 !important;
@@ -1010,21 +806,14 @@ h2.suicide-theme {
   box-shadow: 0 0 10px #000 !important;
   background: #232323 !important;
 }
-.suicide-theme .twitch-chat-iframe-wrap iframe {
-  border-radius: 8px !important;
-  background: #232323 !important;
-}
 @media (max-width: 600px) {
   .twitch-chat-iframe-wrap {
     border-width: 4px;
     border-radius: 10px;
     margin: 8px auto 16px auto;
-  }
-  .twitch-chat-iframe-wrap iframe {
     height: 300px !important;
     min-height: 220px !important;
     max-height: 50vh !important;
-    border-radius: 8px !important;
   }
 }
 .help-phone-btn {
@@ -1264,4 +1053,234 @@ h2.suicide-theme {
     max-width: 90vw;
     min-width: 36px;
   }
+}
+
+.custom-chat-container {
+  flex-grow: 1; 
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+  background: #fffbe9;
+  font-family: 'Comic Sans MS', cursive;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  scrollbar-width: thin;
+  scrollbar-color: #ff00ff #ffff00;
+}
+
+.custom-chat-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-chat-container::-webkit-scrollbar-track {
+  background: #ffff00;
+}
+
+.custom-chat-container::-webkit-scrollbar-thumb {
+  background-color: #ff00ff;
+  border-radius: 6px;
+  border: 2px solid #ffff00;
+}
+
+.chat-message {
+  margin-bottom: 8px;
+  line-height: 1.4;
+  font-size: 0.95rem;
+  color: #222;
+  word-break: break-word;
+}
+
+.chat-badge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+  width: 18px;
+  height: 18px;
+}
+
+.chat-username {
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+.chat-message-text .emote {
+  display: inline-block;
+  vertical-align: middle;
+  width: 28px;
+  height: 28px;
+  margin: -4px 2px;
+}
+
+.system-message {
+    font-style: italic;
+    color: #777;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.system-message.error {
+    color: #c00;
+    font-weight: bold;
+}
+
+.suicide-theme .custom-chat-container {
+  background: #232323 !important;
+  color: #b0b0b0 !important;
+  font-family: 'Impact', fantasy !important;
+  scrollbar-color: #a10000 #232323;
+}
+
+.suicide-theme .custom-chat-container::-webkit-scrollbar-track {
+  background: #232323;
+}
+
+.suicide-theme .custom-chat-container::-webkit-scrollbar-thumb {
+  background-color: #a10000;
+  border-color: #232323;
+}
+
+.suicide-theme .chat-message {
+  color: #b0b0b0;
+}
+
+.suicide-theme .chat-username {
+  color: #ffb0b0 !important;
+}
+
+.suicide-theme .system-message {
+    color: #888;
+}
+
+.custom-chat-controls {
+  padding: 10px;
+  background: #fffbe9;
+  border-top: 3px dashed #ff00ff;
+}
+
+.chat-login-wrapper {
+  display: flex;
+}
+
+.chat-login-btn {
+  width: 100%;
+  background: #ffff00;
+  color: #a100a1;
+  border: 3px dashed #ff00ff;
+  border-radius: 24px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-family: 'Comic Sans MS', cursive;
+  cursor: pointer;
+  box-shadow: 0 2px 16px #ff00ff44;
+  transition: all 0.2s;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 0 #fff, 0 0 8px #ff00ff33;
+}
+
+.chat-login-btn:hover {
+  background: #ffccff;
+  color: #ff00ff;
+  border-color: #00ffea;
+  transform: scale(1.02);
+  box-shadow: 0 2px 24px #00ffea88;
+}
+
+.chat-send-form {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input {
+  flex-grow: 1;
+  border: 3px dashed #ff00ff;
+  background: #fffbe9;
+  color: #a100a1;
+  border-radius: 12px;
+  padding: 0 12px;
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-style: solid;
+  border-color: #00ffea;
+  box-shadow: 0 0 10px #00ffea88;
+}
+
+.chat-send-btn {
+  background: #ff00ff;
+  color: #ffff00;
+  border: 3px solid #ffff00;
+  border-radius: 12px;
+  font-family: 'Comic Sans MS', cursive;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 8px 20px;
+  text-shadow: 1px 1px 0px #000;
+}
+
+.chat-send-btn:hover {
+  transform: rotate(10deg) scale(1.1);
+  background: #ffff00;
+  color: #ff00ff;
+  border-color: #ff00ff;
+}
+
+.suicide-theme .custom-chat-controls {
+  background: #181818 !important;
+  border-top: 2px solid #a10000 !important;
+}
+
+.suicide-theme .chat-login-btn {
+  background: #232323 !important;
+  color: #ffb0b0 !important;
+  border: 2px solid #a10000 !important;
+  border-radius: 10px !important;
+  font-family: 'Impact', fantasy !important;
+  box-shadow: 0 2px 12px #a1000022 !important;
+  text-shadow: 1px 1px 0 #000, 0 0 8px #a1000033 !important;
+}
+
+.suicide-theme .chat-login-btn:hover {
+  background: #a10000 !important;
+  color: #fff !important;
+  border-color: #ffb0b0 !important;
+  box-shadow: 0 2px 24px #a1000055 !important;
+  transform: scale(1.02);
+}
+
+.suicide-theme .chat-input {
+  background: #232323 !important;
+  color: #ccc !important;
+  border: 2px solid #a10000 !important;
+  border-radius: 10px !important;
+  font-family: 'Impact', fantasy !important;
+  border-style: solid;
+}
+
+.suicide-theme .chat-input:focus {
+  border-color: #ffb0b0 !important;
+  box-shadow: none !important;
+}
+
+.suicide-theme .chat-send-btn {
+  background: #a10000 !important;
+  color: #fff !important;
+  border: 2px solid #ffb0b0 !important;
+  border-radius: 10px !important;
+  font-family: 'Impact', fantasy !important;
+  text-shadow: none;
+}
+
+.suicide-theme .chat-send-btn:hover {
+  transform: scale(1.1);
+  background: #ffb0b0 !important;
+  color: #a10000 !important;
+  border-color: #a10000 !important;
 }
