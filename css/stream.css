@@ -311,7 +311,7 @@ html, body {
   height: 100%;
   background: #000;
   display: flex;
-  flex-direction: column; /* Changed to column */
+  flex-direction: column; 
   align-items: stretch;
   justify-content: stretch;
 }
