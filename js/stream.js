@@ -423,7 +423,7 @@ async function switchChannel(idx) {
         iframe.frameborder = '0';
         iframe.allowfullscreen = 'true';
         iframe.scrolling = 'no';
-        iframe.style.cssText = 'width:100%; aspect-ratio:16/9; height:auto;';
+        iframe.style.cssText = 'width:100%; height:100%; display: block; border: none;';
         embedDiv.appendChild(iframe);
     }
   
