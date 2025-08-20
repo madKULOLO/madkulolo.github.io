@@ -1,5 +1,7 @@
 const channels = [
   {
+    id: '44433428',
+    name: 'madkulolo',
     title: 'ДЕД ЛАЙВ',
     subtitle: 'ПОДКЛЮЧАЙСЯ',
     donate: [
@@ -17,6 +19,8 @@ const channels = [
     ]
   },
   {
+    id: '137666497',
+    name: 'mrrmaikl',
     title: 'выход есть',
     subtitle: 'вскрываемся!',
     donate: [
@@ -40,7 +44,6 @@ const socialLinks = document.getElementById('socialLinks');
 const playerContainer = document.getElementById('playerContainer');
 const channelSwitcher = document.getElementById('channelSwitcher');
 
-
 const CLIENT_ID = '5ivtmm2oqik8tq57qxbxkl2nwju1ew'; 
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 
@@ -55,6 +58,134 @@ const chatControlsMobile = document.getElementById('chatControlsMobile');
 const loginButtons = document.querySelectorAll('.chat-login-btn');
 const sendForms = document.querySelectorAll('.chat-send-form');
 
+const globalThirdPartyEmotes = {
+    bttv: new Map(),
+    ffz: new Map(),
+    sevenTv: new Map()
+};
+let activeThirdPartyEmotes = {
+    bttv: new Map(),
+    ffz: new Map(),
+    sevenTv: new Map()
+};
+let globalEmotesLoaded = false;
+
+async function fetchThirdPartyEmotes(channelId) {
+    if (!globalEmotesLoaded) {
+        try {
+            const response = await fetch('https://api.betterttv.net/3/cached/emotes/global');
+            if (response.ok) {
+                const emotes = await response.json();
+                if (Array.isArray(emotes)) {
+                    emotes.forEach(e => globalThirdPartyEmotes.bttv.set(e.code, `https://cdn.betterttv.net/emote/${e.id}/1x`));
+                }
+            }
+        } catch (e) {}
+        
+        try {
+            const response = await fetch('https://api.betterttv.net/3/cached/frankerfacez/emotes/global');
+            if (response.ok) {
+                const emotes = await response.json();
+                if (Array.isArray(emotes)) {
+                    emotes.forEach(e => globalThirdPartyEmotes.ffz.set(e.code, `https://cdn.betterttv.net/frankerfacez_emote/${e.id}/1`));
+                }
+            }
+        } catch (e) {}
+
+        try {
+            const response = await fetch('https://7tv.io/v3/emote-sets/global');
+            if (response.ok) {
+                const data = await response.json();
+                if (data && Array.isArray(data.emotes)) {
+                    data.emotes.forEach(e => {
+                        const url = `https://cdn.7tv.app/emote/${e.id}/1x.webp`;
+                        globalThirdPartyEmotes.sevenTv.set(e.name, url);
+                    });
+                }
+            }
+        } catch (e) {}
+        
+        globalEmotesLoaded = true;
+    }
+
+    const bttvChannelEmotes = new Map();
+    const ffzChannelEmotes = new Map();
+    const sevenTvChannelEmotes = new Map();
+
+    try {
+        const response = await fetch(`https://api.betterttv.net/3/cached/users/twitch/${channelId}`);
+        if (response.ok) {
+            const data = await response.json();
+            if (data && Array.isArray(data.channelEmotes)) {
+                data.channelEmotes.forEach(e => bttvChannelEmotes.set(e.code, `https://cdn.betterttv.net/emote/${e.id}/1x`));
+            }
+            if (data && Array.isArray(data.sharedEmotes)) {
+                data.sharedEmotes.forEach(e => bttvChannelEmotes.set(e.code, `https://cdn.betterttv.net/emote/${e.id}/1x`));
+            }
+        }
+    } catch (e) {}
+    
+    try {
+        const response = await fetch(`https://api.betterttv.net/3/cached/frankerfacez/users/twitch/${channelId}`);
+        if (response.ok) {
+            const emotes = await response.json();
+            if(Array.isArray(emotes)) {
+                emotes.forEach(e => ffzChannelEmotes.set(e.code, `https://cdn.betterttv.net/frankerfacez_emote/${e.id}/1`));
+            }
+        }
+    } catch (e) {}
+
+    try {
+        const response = await fetch(`https://api.frankerfacez.com/v1/room/id/${channelId}`);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.sets) {
+                for (const setId in data.sets) {
+                    const set = data.sets[setId];
+                    if (set.emoticons && Array.isArray(set.emoticons)) {
+                        set.emoticons.forEach(e => {
+                            const url = e.urls['2'] || e.urls['1'];
+                            if (url) ffzChannelEmotes.set(e.name, `https:${url}`);
+                        });
+                    }
+                }
+            }
+        }
+    } catch(e) {}
+    
+    try {
+        const userResponse = await fetch(`https://7tv.io/v3/users/twitch/${channelId}`);
+        if (userResponse.ok) {
+            const userData = await userResponse.json();
+            if (userData && Array.isArray(userData.emote_sets)) {
+                const emoteSetPromises = userData.emote_sets.map(set => 
+                    fetch(`https://7tv.io/v3/emote-sets/${set.id}`).then(res => res.ok ? res.json() : null)
+                );
+                const emoteSets = await Promise.all(emoteSetPromises);
+                emoteSets.forEach(emoteSet => {
+                    if (emoteSet && Array.isArray(emoteSet.emotes)) {
+                        emoteSet.emotes.forEach(e => {
+                            const url = `https://cdn.7tv.app/emote/${e.id}/1x.webp`;
+                            sevenTvChannelEmotes.set(e.name, url);
+                        });
+                    }
+                });
+            }
+        }
+    } catch (e) {}
+    
+    activeThirdPartyEmotes.bttv = new Map([...globalThirdPartyEmotes.bttv, ...bttvChannelEmotes]);
+    activeThirdPartyEmotes.ffz = new Map([...globalThirdPartyEmotes.ffz, ...ffzChannelEmotes]);
+    activeThirdPartyEmotes.sevenTv = new Map([...globalThirdPartyEmotes.sevenTv, ...sevenTvChannelEmotes]);
+}
+
+function parseThirdPartyEmotes(word) {
+    if (activeThirdPartyEmotes.bttv.has(word)) return activeThirdPartyEmotes.bttv.get(word);
+    if (activeThirdPartyEmotes.ffz.has(word)) return activeThirdPartyEmotes.ffz.get(word);
+    if (activeThirdPartyEmotes.sevenTv.has(word)) return activeThirdPartyEmotes.sevenTv.get(word);
+    return null;
+}
+
 function twitchLogin() {
     const scopes = 'chat:read chat:edit';
     const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${scopes}`;
@@ -65,7 +196,6 @@ function handleAuthRedirect() {
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     const accessToken = params.get('access_token');
-
     if (accessToken) {
         localStorage.setItem('twitch_access_token', accessToken);
         history.pushState("", document.title, window.location.pathname + window.location.search);
@@ -77,25 +207,14 @@ function handleAuthRedirect() {
 async function fetchUserInfo(token) {
     try {
         const response = await fetch('https://api.twitch.tv/helix/users', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Client-Id': CLIENT_ID
-            }
+            headers: { 'Authorization': `Bearer ${token}`, 'Client-Id': CLIENT_ID }
         });
         const data = await response.json();
         if (data.data && data.data.length > 0) {
-            const user = data.data[0];
-            userInfo = {
-                login: user.login,
-                displayName: user.display_name,
-                id: user.id
-            };
+            userInfo = { login: data.data[0].login, displayName: data.data[0].display_name, id: data.data[0].id };
             localStorage.setItem('twitch_user_info', JSON.stringify(userInfo));
         }
-    } catch (error) {
-        console.error("Ошибка при получении информации о пользователе:", error);
-        logout();
-    }
+    } catch (error) { logout(); }
 }
 
 function logout() {
@@ -108,19 +227,14 @@ function logout() {
 function updateUIForLoginState() {
     const token = localStorage.getItem('twitch_access_token');
     if (token && userInfo.login) {
-        chatControlsDesktop.querySelector('.chat-login-wrapper').style.display = 'none';
-        chatControlsMobile.querySelector('.chat-login-wrapper').style.display = 'none';
-        chatControlsDesktop.querySelector('.chat-send-form').style.display = 'flex';
-        chatControlsMobile.querySelector('.chat-send-form').style.display = 'flex';
+        document.querySelectorAll('.chat-login-wrapper').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.chat-send-form').forEach(el => el.style.display = 'flex');
     } else {
-        chatControlsDesktop.querySelector('.chat-login-wrapper').style.display = 'flex';
-        chatControlsMobile.querySelector('.chat-login-wrapper').style.display = 'flex';
-        chatControlsDesktop.querySelector('.chat-send-form').style.display = 'none';
-        chatControlsMobile.querySelector('.chat-send-form').style.display = 'none';
+        document.querySelectorAll('.chat-login-wrapper').forEach(el => el.style.display = 'flex');
+        document.querySelectorAll('.chat-send-form').forEach(el => el.style.display = 'none');
     }
     switchChannel(parseInt(select.value, 10));
 }
-
 
 function displayMessage(tags, message) {
     if (isFirstMessage) {
@@ -128,8 +242,6 @@ function displayMessage(tags, message) {
         chatContainerMobile.innerHTML = '';
         isFirstMessage = false;
     }
-
-    if (!chatContainerDesktop || !chatContainerMobile) return;
 
     const messageElement = document.createElement('div');
     messageElement.className = 'chat-message';
@@ -143,36 +255,52 @@ function displayMessage(tags, message) {
     const messageTextElement = document.createElement('span');
     messageTextElement.className = 'chat-message-text';
 
-    const emotes = tags.emotes || {};
+    const twitchEmotes = tags.emotes || {};
     const messageParts = [];
     let lastIndex = 0;
 
-    const sortedEmoteKeys = Object.keys(emotes).sort((a, b) => {
-        const a_pos = parseInt(emotes[a][0].split('-')[0]);
-        const b_pos = parseInt(emotes[b][0].split('-')[0]);
-        return a_pos - b_pos;
-    });
-
-    sortedEmoteKeys.forEach(emoteId => {
-        emotes[emoteId].forEach(position => {
+    Object.keys(twitchEmotes).forEach(emoteId => {
+        twitchEmotes[emoteId].forEach(position => {
             const [start, end] = position.split('-').map(Number);
             if (start > lastIndex) {
-                messageParts.push(document.createTextNode(message.substring(lastIndex, start)));
+                messageParts.push({ type: 'text', content: message.substring(lastIndex, start) });
             }
-            const emoteImg = document.createElement('img');
-            emoteImg.src = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/1.0`;
-            emoteImg.alt = message.substring(start, end + 1);
-            emoteImg.className = 'emote';
-            messageParts.push(emoteImg);
+            messageParts.push({ type: 'emote', url: `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/1.0`, alt: message.substring(start, end + 1) });
             lastIndex = end + 1;
         });
     });
 
     if (lastIndex < message.length) {
-        messageParts.push(document.createTextNode(message.substring(lastIndex)));
+        messageParts.push({ type: 'text', content: message.substring(lastIndex) });
     }
+
+    messageParts.forEach(part => {
+        if (part.type === 'emote') {
+            const emoteImg = document.createElement('img');
+            emoteImg.src = part.url;
+            emoteImg.alt = part.alt;
+            emoteImg.className = 'emote';
+            messageTextElement.appendChild(emoteImg);
+        } else {
+            const words = part.content.split(' ');
+            words.forEach((word, index) => {
+                const emoteUrl = parseThirdPartyEmotes(word);
+                if (emoteUrl) {
+                    const emoteImg = document.createElement('img');
+                    emoteImg.src = emoteUrl;
+                    emoteImg.alt = word;
+                    emoteImg.className = 'emote';
+                    messageTextElement.appendChild(emoteImg);
+                } else {
+                    messageTextElement.appendChild(document.createTextNode(word));
+                }
+                if (index < words.length - 1) {
+                    messageTextElement.appendChild(document.createTextNode(' '));
+                }
+            });
+        }
+    });
     
-    messageParts.forEach(part => messageTextElement.appendChild(part));
     messageElement.appendChild(messageTextElement);
     
     chatContainerDesktop.appendChild(messageElement.cloneNode(true));
@@ -183,513 +311,309 @@ function displayMessage(tags, message) {
 }
 
 function connectToChat(channelName) {
-    if (tmiClient) {
-        tmiClient.disconnect();
-    }
-    
+    if (tmiClient) tmiClient.disconnect();
     isFirstMessage = true;
-
     const token = localStorage.getItem('twitch_access_token');
-    let clientOptions = {
-        options: { debug: false },
-        channels: [channelName]
-    };
+    let clientOptions = { options: { debug: false }, channels: [channelName] };
 
     if (token && userInfo.login) {
-        clientOptions.identity = {
-            username: userInfo.login,
-            password: `oauth:${token}`
-        };
+        clientOptions.identity = { username: userInfo.login, password: `oauth:${token}` };
         const connectedMsg = `<div class="chat-message system-message">Вы вошли как ${userInfo.displayName}.</div>`;
-        if (chatContainerDesktop) chatContainerDesktop.innerHTML = connectedMsg;
-        if (chatContainerMobile) chatContainerMobile.innerHTML = connectedMsg;
-
+        chatContainerDesktop.innerHTML = connectedMsg;
+        chatContainerMobile.innerHTML = connectedMsg;
     } else {
         const connectingMsg = '<div class="chat-message system-message">Чат (только чтение). Войдите, чтобы писать.</div>';
-        if (chatContainerDesktop) chatContainerDesktop.innerHTML = connectingMsg;
-        if (chatContainerMobile) chatContainerMobile.innerHTML = connectingMsg;
+        chatContainerDesktop.innerHTML = connectingMsg;
+        chatContainerMobile.innerHTML = connectingMsg;
     }
 
     tmiClient = new tmi.Client(clientOptions);
-    
-    tmiClient.on('message', (channel, tags, message, self) => {
-        displayMessage(tags, message);
-    });
-
+    tmiClient.on('message', (channel, tags, message, self) => displayMessage(tags, message));
     tmiClient.connect().catch(err => {
-        console.error("Ошибка подключения к чату:", err);
-        if (String(err).includes("Login authentication failed")) {
-             logout();
-        }
+        if (String(err).includes("Login authentication failed")) logout();
         const errorMsg = `<div class="chat-message system-message error">Не удалось подключиться к чату.</div>`;
-        if (chatContainerDesktop) chatContainerDesktop.innerHTML = errorMsg;
-        if (chatContainerMobile) chatContainerMobile.innerHTML = errorMsg;
+        chatContainerDesktop.innerHTML = errorMsg;
+        chatContainerMobile.innerHTML = errorMsg;
     });
 }
 
 function setTheme(idx) {
-  const channelLabel = document.getElementById('channelLabel');
-  const chatModal = document.getElementById('twitchChatModal');
-  const chatBlock = document.getElementById('twitchChatBlock');
+    const elementsToTheme = [document.body, container, h1, h2, btnGroup, socialLinks, playerContainer, channelSwitcher, document.getElementById('twitchChatModal'), document.getElementById('twitchChatBlock')];
+    const channelLabel = document.getElementById('channelLabel');
 
-  if (idx === 1) {
-    document.body.classList.add('suicide-theme');
-    container.classList.add('suicide-theme');
-    h1.classList.add('suicide-theme');
-    h2.classList.add('suicide-theme');
-    btnGroup.classList.add('suicide-theme');
-    socialLinks.classList.add('suicide-theme');
-    playerContainer.classList.add('suicide-theme');
-    channelSwitcher.classList.add('suicide-theme');
-    if (chatModal) chatModal.classList.add('suicide-theme');
-    if (chatBlock) chatBlock.classList.add('suicide-theme');
-    
-    document.body.style.background = 'radial-gradient(ellipse at center, #232323 0%, #181818 100%)';
-    channelLabel.style.color = '#a10000';
-  } else {
-    document.body.classList.remove('suicide-theme');
-    container.classList.remove('suicide-theme');
-    h1.classList.remove('suicide-theme');
-    h2.classList.remove('suicide-theme');
-    btnGroup.classList.remove('suicide-theme');
-    socialLinks.classList.remove('suicide-theme');
-    playerContainer.classList.remove('suicide-theme');
-    channelSwitcher.classList.remove('suicide-theme');
-    if (chatModal) chatModal.classList.remove('suicide-theme');
-    if (chatBlock) chatBlock.classList.remove('suicide-theme');
-    
-    document.body.style.background = 'radial-gradient(circle at 60% 40%, #ffccff 0%, #ffff00 100%)';
-    channelLabel.style.color = '#222';
-  }
+    if (idx === 1) {
+        elementsToTheme.forEach(el => el && el.classList.add('suicide-theme'));
+        document.body.style.background = 'radial-gradient(ellipse at center, #232323 0%, #181818 100%)';
+        if(channelLabel) channelLabel.style.color = '#a10000';
+    } else {
+        elementsToTheme.forEach(el => el && el.classList.remove('suicide-theme'));
+        document.body.style.background = 'radial-gradient(circle at 60% 40%, #ffccff 0%, #ffff00 100%)';
+        if(channelLabel) channelLabel.style.color = '#222';
+    }
 }
 
 function setContent(idx) {
-  
-  h1.textContent = channels[idx].title;
-  h2.textContent = channels[idx].subtitle;
-  
-  btnGroup.innerHTML = '';
-  channels[idx].donate.forEach(btn => {
-    const a = document.createElement('a');
-    a.href = btn.href;
-    a.textContent = btn.text;
-    a.className = btn.class + (idx === 1 ? ' suicide-theme' : '');
-    a.target = '_blank';
-    btnGroup.appendChild(a);
-  });
-  socialLinks.innerHTML = '';
-  channels[idx].socials.forEach(soc => {
-    const a = document.createElement('a');
-    a.innerHTML = `<i class="${soc.icon}"></i>`;
-    if (soc.icon === 'fa fa-phone fa-fw') {
-      a.href = soc.href;
-      a.id = 'helpPhoneBtn';
-      a.addEventListener('click', function(e) {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        if (!isMobile) {
-          e.preventDefault();
-          window.open('https://telefon-doveria.ru/', '_blank');
+    h1.textContent = channels[idx].title;
+    h2.textContent = channels[idx].subtitle;
+    btnGroup.innerHTML = '';
+    channels[idx].donate.forEach(btn => {
+        const a = document.createElement('a');
+        a.href = btn.href;
+        a.textContent = btn.text;
+        a.className = btn.class + (idx === 1 ? ' suicide-theme' : '');
+        a.target = '_blank';
+        btnGroup.appendChild(a);
+    });
+    socialLinks.innerHTML = '';
+    channels[idx].socials.forEach(soc => {
+        const a = document.createElement('a');
+        a.innerHTML = `<i class="${soc.icon}"></i>`;
+        if (soc.icon === 'fa fa-phone fa-fw') {
+            a.href = soc.href;
+            a.id = 'helpPhoneBtn';
+            a.addEventListener('click', e => {
+                if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    e.preventDefault();
+                    window.open('https://telefon-doveria.ru/', '_blank');
+                }
+            });
+        } else {
+            a.href = soc.href;
+            a.target = '_blank';
         }
-      });
+        socialLinks.appendChild(a);
+    });
+    const commandsPanel = document.getElementById('commandsPanel');
+    const openCommandsBtn = document.getElementById('openCommandsBtn');
+    if (idx === 0) {
+        if (commandsPanel) commandsPanel.style.display = '';
+        if (openCommandsBtn) openCommandsBtn.style.display = '';
     } else {
-      a.href = soc.href;
-      a.target = soc.target || '_blank';
+        if (commandsPanel) {
+            commandsPanel.style.display = 'none';
+            commandsPanel.classList.remove('open');
+        }
+        if (openCommandsBtn) {
+            openCommandsBtn.style.display = 'none';
+            openCommandsBtn.innerHTML = '📜CUMанды💦';
+        }
+        if (typeof commandsOpen !== 'undefined') commandsOpen = false;
     }
-    socialLinks.appendChild(a);
-  });
-  const commandsPanel = document.getElementById('commandsPanel');
-  const openCommandsBtn = document.getElementById('openCommandsBtn');
-  if (idx === 0) {
-    if (commandsPanel) commandsPanel.style.display = '';
-    if (openCommandsBtn) openCommandsBtn.style.display = '';
-  } else {
-    if (commandsPanel) {
-      commandsPanel.style.display = 'none';
-      commandsPanel.classList.remove('open');
-    }
-    if (openCommandsBtn) {
-      openCommandsBtn.style.display = 'none';
-      openCommandsBtn.innerHTML = '📜CUMанды💦';
-    }
-    if (typeof commandsOpen !== 'undefined') commandsOpen = false;
-  }
 }
 
 function setAnimations(idx) {
-  if (idx === 1) {
-    h1.style.animation = 'none';
-    h2.style.animation = 'none';
-    btnGroup.style.animation = 'none';
-  } else {
-    h1.style.animation = '';
-    h2.style.animation = '';
-    btnGroup.style.animation = '';
-  }
+    const animatedElements = [h1, h2, btnGroup];
+    if (idx === 1) {
+        animatedElements.forEach(el => el.style.animation = 'none');
+    } else {
+        animatedElements.forEach(el => el.style.animation = '');
+    }
 }
 
-
-function switchChannel(idx) {
-  const embedDiv = document.getElementById('playerTwitchEmbed');
-  const channelName = idx === 0 ? 'madkulolo' : 'mrrmaikl';
-  connectToChat(channelName);
-        
-  if (embedDiv) {
-      embedDiv.innerHTML = '';
-      const iframe = document.createElement('iframe');
-      if (idx === 0) {
-        iframe.setAttribute('src', 'https://stream.deduso.su/0cd70214-4b93-45ef-a673-b66fab86a296.html');
-      } else {
-        iframe.setAttribute('src', 'https://stream.deduso.su/9f3dda91-feed-452d-aec7-9171d404109e.html');
-      }
-      iframe.setAttribute('frameborder', '0');
-      iframe.setAttribute('allowfullscreen', 'true');
-      iframe.setAttribute('scrolling', 'no');
-      iframe.style.width = '100%';
-      iframe.style.aspectRatio = '16/9';
-      iframe.style.height = '';
-      embedDiv.appendChild(iframe);
-  }
+async function switchChannel(idx) {
+    const channel = channels[idx];
+    await fetchThirdPartyEmotes(channel.id);
+    connectToChat(channel.name);
+    
+    const embedDiv = document.getElementById('playerTwitchEmbed');
+    if (embedDiv) {
+        embedDiv.innerHTML = '';
+        const iframe = document.createElement('iframe');
+        iframe.src = idx === 0 ? 'https://stream.deduso.su/0cd70214-4b93-45ef-a673-b66fab86a296.html' : 'https://stream.deduso.su/9f3dda91-feed-452d-aec7-9171d404109e.html';
+        iframe.frameborder = '0';
+        iframe.allowfullscreen = 'true';
+        iframe.scrolling = 'no';
+        iframe.style.cssText = 'width:100%; aspect-ratio:16/9; height:auto;';
+        embedDiv.appendChild(iframe);
+    }
   
-  setTheme(idx);
-  setContent(idx);
-  setAnimations(idx);
+    setTheme(idx);
+    setContent(idx);
+    setAnimations(idx);
 }
 
-select.addEventListener('change', function() {
-  idx = parseInt(this.value);
-  switchChannel(idx);
-});
+select.addEventListener('change', () => switchChannel(parseInt(select.value, 10)));
 
 function getCurrentChannelName() {
-  const sel = document.getElementById('channelSelect');
-  return sel && sel.value === '1' ? 'mrrmaikl' : 'madkulolo';
+    return channels[parseInt(select.value, 10)].name;
 }
 
-
-document.addEventListener('DOMContentLoaded', async function() {
-    let token = handleAuthRedirect();
-    if (!token) {
-        token = localStorage.getItem('twitch_access_token');
-    }
-
-    const storedUserInfo = localStorage.getItem('twitch_user_info');
+document.addEventListener('DOMContentLoaded', async () => {
+    let token = handleAuthRedirect() || localStorage.getItem('twitch_access_token');
     if (token) {
-        if (storedUserInfo) {
-            userInfo = JSON.parse(storedUserInfo);
-        } else {
-            await fetchUserInfo(token);
-        }
+        const storedUserInfo = localStorage.getItem('twitch_user_info');
+        if (storedUserInfo) userInfo = JSON.parse(storedUserInfo);
+        else await fetchUserInfo(token);
     }
     updateUIForLoginState();
 
+    const openBtn = document.getElementById('openTwitchChatBtn');
+    const chatBlock = document.getElementById('twitchChatBlock');
+    const modal = document.getElementById('twitchChatModal');
+    const closeModalBtn = document.getElementById('closeTwitchChatModal');
+    const dragbar = document.getElementById('twitchChatModalDragbar');
+    let chatOpen = false;
 
-  const openBtn = document.getElementById('openTwitchChatBtn');
-  const chatBlock = document.getElementById('twitchChatBlock');
-  const modal = document.getElementById('twitchChatModal');
-  const closeModalBtn = document.getElementById('closeTwitchChatModal');
-  const dragbar = document.getElementById('twitchChatModalDragbar');
-  const resizeLeft = document.getElementById('twitchChatModalResizeLeft');
-  const resizeRight = document.getElementById('twitchChatModalResizeRight');
-  const resizeTop = document.getElementById('twitchChatModalResizeTop');
-  const resizeBottom = document.getElementById('twitchChatModalResizeBottom');
-  const select = document.getElementById('channelSelect');
-  const phoneBtn = document.getElementById('helpPhoneBtn');
-  let chatOpen = false;
-  let dragOffsetX = 0, dragOffsetY = 0, isDragging = false;
-  let isResizing = false, resizeDir = '', resizeStart = {};
-
-  function isMobile() {
-    return window.matchMedia('(max-width: 900px)').matches;
-  }
-
-  function setModalTheme(idx) {
-    if (!modal) return;
-    const title = document.getElementById('twitchChatModalTitle');
-    const closeIcon = document.getElementById('twitchChatModalCloseIcon');
-    if (idx === 1) {
-      modal.classList.add('suicide-theme');
-      if (title) title.innerHTML = '💀 Писать или не писать?..';
-      if (closeIcon) closeIcon.innerHTML = '<svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#a10000" stroke="#ffb0b0" stroke-width="3"/><text x="14" y="19" text-anchor="middle" font-size="18" fill="#fff">×</text></svg>';
-    } else {
-      modal.classList.remove('suicide-theme');
-      if (title) title.innerHTML = '📌 Не забыть 🗣️💊';
-      if (closeIcon) closeIcon.innerHTML = '<svg width="28" height="28" viewBox="0 0 28 28"><rect x="3" y="3" width="22" height="22" rx="8" fill="#ffff00" stroke="#ff00ff" stroke-width="3"/><text x="14" y="19" text-anchor="middle" font-size="18" fill="#a100a1">×</text></svg>';
-    }
-  }
-
-  function showChat() {
-    const idx = parseInt(select.value, 10) || 0;
-    setModalTheme(idx);
-    if (isMobile()) {
-      if (!chatBlock) return;
-      chatBlock.style.display = 'flex';
-      openBtn.textContent = 'Скрыть чат Twitch';
-    } else {
-      if (!modal) return;
-      modal.classList.add('open');
-      openBtn.textContent = 'Скрыть чат Twitch';
-    }
-    chatOpen = true;
-  }
-
-  function hideChat() {
-    if (isMobile()) {
-      if (!chatBlock) return;
-      chatBlock.style.display = 'none';
-      openBtn.textContent = 'Открыть чат Twitch';
-    } else {
-      if (!modal) return;
-      modal.classList.remove('open');
-      openBtn.textContent = 'Открыть чат Twitch';
-    }
-    chatOpen = false;
-  }
-
-  openBtn.onclick = function() {
-    if (chatOpen) {
-      hideChat();
-    } else {
-      showChat();
-    }
-  };
-
-  if (closeModalBtn) {
-    closeModalBtn.onclick = function() {
-      hideChat();
-    };
-  }
-
-  if (dragbar && modal) {
-    dragbar.addEventListener('mousedown', function(e) {
-      if (isMobile()) return;
-      isDragging = true;
-      const rect = modal.getBoundingClientRect();
-      dragOffsetX = e.clientX - rect.left;
-      dragOffsetY = e.clientY - rect.top;
-      document.body.style.userSelect = 'none';
-    });
-    document.addEventListener('mousemove', function(e) {
-      if (isDragging && modal) {
-        let x = e.clientX - dragOffsetX;
-        let y = e.clientY - dragOffsetY;
-        x = Math.max(0, Math.min(window.innerWidth - modal.offsetWidth, x));
-        y = Math.max(0, Math.min(window.innerHeight - modal.offsetHeight, y));
-        modal.style.left = x + 'px';
-        modal.style.top = y + 'px';
-        modal.style.right = 'auto';
-      }
-    });
-    document.addEventListener('mouseup', function() {
-      isDragging = false;
-      document.body.style.userSelect = '';
-    });
-  }
-
-
-  function startResize(dir, e) {
-    if (isMobile()) return;
-    isResizing = true;
-    resizeDir = dir;
-    resizeStart = {
-      mouseX: e.clientX,
-      mouseY: e.clientY,
-      width: modal.offsetWidth,
-      height: modal.offsetHeight,
-      left: modal.offsetLeft,
-      top: modal.offsetTop
-    };
-    document.body.style.userSelect = 'none';
-    e.preventDefault();
-  }
-
-  if (resizeLeft && modal) resizeLeft.addEventListener('mousedown', e => startResize('left', e));
-  if (resizeRight && modal) resizeRight.addEventListener('mousedown', e => startResize('right', e));
-  if (resizeTop && modal) resizeTop.addEventListener('mousedown', e => startResize('top', e));
-  if (resizeBottom && modal) resizeBottom.addEventListener('mousedown', e => startResize('bottom', e));
-
-  document.addEventListener('mousemove', function(e) {
-    if (isResizing && modal) {
-      let minW = 320, minH = 320, maxW = window.innerWidth - 8, maxH = window.innerHeight - 8;
-      let newW = resizeStart.width, newH = resizeStart.height, newLeft = resizeStart.left, newTop = resizeStart.top;
-      if (resizeDir === 'right') {
-        newW = Math.max(minW, Math.min(maxW - modal.offsetLeft, resizeStart.width + (e.clientX - resizeStart.mouseX)));
-      } else if (resizeDir === 'left') {
-        let delta = e.clientX - resizeStart.mouseX;
-        newW = Math.max(minW, Math.min(maxW, resizeStart.width - delta));
-        newLeft = Math.min(resizeStart.left + delta, resizeStart.left + resizeStart.width - minW);
-        if (newLeft < 8) {
-          newW = newW - (8 - newLeft);
-          newLeft = 8;
+    function setModalTheme(idx) {
+        if (!modal) return;
+        const title = document.getElementById('twitchChatModalTitle');
+        const closeIcon = document.getElementById('twitchChatModalCloseIcon');
+        if (idx === 1) {
+            modal.classList.add('suicide-theme');
+            if (title) title.innerHTML = '💀 Писать или не писать?..';
+            if (closeIcon) closeIcon.innerHTML = '<svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#a10000" stroke="#ffb0b0" stroke-width="3"/><text x="14" y="19" text-anchor="middle" font-size="18" fill="#fff">×</text></svg>';
+        } else {
+            modal.classList.remove('suicide-theme');
+            if (title) title.innerHTML = '📌 Не забыть 🗣️💊';
+            if (closeIcon) closeIcon.innerHTML = '<svg width="28" height="28" viewBox="0 0 28 28"><rect x="3" y="3" width="22" height="22" rx="8" fill="#ffff00" stroke="#ff00ff" stroke-width="3"/><text x="14" y="19" text-anchor="middle" font-size="18" fill="#a100a1">×</text></svg>';
         }
-      } else if (resizeDir === 'bottom') {
-        newH = Math.max(minH, Math.min(maxH - modal.offsetTop, resizeStart.height + (e.clientY - resizeStart.mouseY)));
-      } else if (resizeDir === 'top') {
-        let delta = e.clientY - resizeStart.mouseY;
-        newH = Math.max(minH, Math.min(maxH, resizeStart.height - delta));
-        newTop = Math.min(resizeStart.top + delta, resizeStart.top + resizeStart.height - minH);
-        if (newTop < 8) {
-          newH = newH - (8 - newTop);
-          newTop = 8;
+    }
+
+    function showChat() {
+        const idx = parseInt(select.value, 10);
+        setModalTheme(idx);
+        
+        if (window.matchMedia('(max-width: 900px)').matches) {
+            if (chatBlock) chatBlock.style.display = 'flex';
+        } else {
+            if (modal) modal.classList.add('open');
         }
-      }
-      if (resizeDir === 'left') modal.style.left = newLeft + 'px';
-      if (resizeDir === 'top') modal.style.top = newTop + 'px';
-      modal.style.width = newW + 'px';
-      modal.style.height = newH + 'px';
+        openBtn.textContent = 'Скрыть чат Twitch';
+        chatOpen = true;
     }
-  });
-  document.addEventListener('mouseup', function() {
-    isResizing = false;
-    resizeDir = '';
-    document.body.style.userSelect = '';
-  });
 
-  document.addEventListener('keydown', function(e) {
-    if (chatOpen && e.key === 'Escape') {
-      hideChat();
+    function hideChat() {
+        if (window.matchMedia('(max-width: 900px)').matches) {
+            if (chatBlock) chatBlock.style.display = 'none';
+        } else {
+            if (modal) modal.classList.remove('open');
+        }
+        openBtn.textContent = 'Открыть чат Twitch';
+        chatOpen = false;
     }
-  });
 
-  if (phoneBtn) {
-    phoneBtn.addEventListener('click', function(e) {
-      if (!isMobile()) {
+    openBtn.onclick = () => chatOpen ? hideChat() : showChat();
+    if (closeModalBtn) closeModalBtn.onclick = hideChat;
+
+    let isDragging = false, isResizing = false;
+    let dragOffsetX, dragOffsetY, resizeStart;
+
+    const onMouseMove = (e) => {
         e.preventDefault();
-        window.open('https://telefon-doveria.ru/', '_blank');
-      }
-    });
-  }
-
-  window.addEventListener('resize', function() {
-    if (chatOpen && !isMobile()) {
-      hideChat();
-      openBtn.textContent = 'Открыть чат Twitch';
-    }
-  });
-
-  const commandSearch = document.getElementById('commandSearch');
-  if (commandSearch) {
-    const easterEggs = {
-      'нигер': () => {
-        alert('Дед говорит: не шути так, а то бан прилетит!');
-      },
-      'яйцо': () => {
-        const egg = document.createElement('div');
-        egg.style.position = 'fixed';
-        egg.style.left = '50%';
-        egg.style.top = '50%';
-        egg.style.transform = 'translate(-50%, -50%)';
-        egg.style.zIndex = 99999;
-        egg.style.fontSize = '5em';
-        egg.style.background = '#fff';
-        egg.style.border = '8px solid #ff00ff';
-        egg.style.borderRadius = '50%';
-        egg.style.padding = '40px 60px';
-        egg.style.boxShadow = '0 0 40px #ff00ff';
-        egg.textContent = '🥚';
-        document.body.appendChild(egg);
-        setTimeout(() => egg.remove(), 2500);
-      },
-      'mrrmaikl': () => {
-        const msg = document.createElement('div');
-        msg.style.position = 'fixed';
-        msg.style.left = '50%';
-        msg.style.top = '50%';
-        msg.style.transform = 'translate(-50%, -50%)';
-        msg.style.zIndex = 99999;
-        msg.style.fontSize = '2.5em';
-        msg.style.background = '#ffff00';
-        msg.style.color = '#ff00ff';
-        msg.style.border = '8px double #00ff00';
-        msg.style.borderRadius = '30px';
-        msg.style.padding = '30px 40px';
-        msg.style.boxShadow = '0 0 40px #00ff00';
-        msg.innerHTML = '💖 MrrMaikl — ЛУЧШАЯ ЖЕНА ДЕДА! 💖';
-        document.body.appendChild(msg);
-        setTimeout(() => msg.remove(), 3000);
-      },
-      'alonerus': () => {
-        const img = document.createElement('img');
-        img.src = 'https://deduso.su/images/neko-8.jpg';
-        img.alt = 'neko';
-        img.style.position = 'fixed';
-        img.style.left = '50%';
-        img.style.top = '50%';
-        img.style.transform = 'translate(-50%, -50%)';
-        img.style.zIndex = 99999;
-        img.style.maxWidth = '60vw';
-        img.style.maxHeight = '60vh';
-        img.style.border = '8px solid #ff00ff';
-        img.style.borderRadius = '30px';
-        img.style.boxShadow = '0 0 40px #00ff00';
-        document.body.appendChild(img);
-        setTimeout(() => img.remove(), 3500);
-      },
-      'kessidi': () => {
-        const msg = document.createElement('div');
-        msg.style.position = 'fixed';
-        msg.style.left = '50%';
-        msg.style.top = '50%';
-        msg.style.transform = 'translate(-50%, -50%)';
-        msg.style.zIndex = 99999;
-        msg.style.fontSize = '2em';
-        msg.style.background = '#fff0f6';
-        msg.style.color = '#ff00ff';
-        msg.style.border = '6px dashed #ff00ff';
-        msg.style.borderRadius = '30px';
-        msg.style.padding = '30px 40px';
-        msg.style.boxShadow = '0 0 40px #ff00ff';
-        msg.innerHTML = '🦵<b>Kessidi</b>, дедовик ждёт твои ножки уже много лет... <br>Когда же деда дождётся? 😭🦵';
-        document.body.appendChild(msg);
-        setTimeout(() => msg.remove(), 4000);
-      }
-    };
-    commandSearch.addEventListener('input', function() {
-      const val = this.value.trim().toLowerCase();
-      if (easterEggs[val]) {
-        easterEggs[val]();
-      }
-      const shown = new Set();
-      document.querySelectorAll('.commands-list .command-list ul').forEach(function(ul) {
-        let hasVisible = false;
-        ul.querySelectorAll('li').forEach(function(li) {
-          const cmdSpan = li.querySelector('.command');
-          let key = '';
-          if (cmdSpan) key = cmdSpan.textContent.trim().toLowerCase();
-          const text = li.textContent.toLowerCase();
-          if (!val || text.includes(val)) {
-            if (!key || !shown.has(key)) {
-              li.style.display = '';
-              hasVisible = true;
-              if (key) shown.add(key);
-            } else {
-              li.style.display = 'none';
+        window.requestAnimationFrame(() => {
+            if (isDragging) {
+                let x = e.clientX - dragOffsetX;
+                let y = e.clientY - dragOffsetY;
+                modal.style.left = `${Math.max(0, Math.min(window.innerWidth - modal.offsetWidth, x))}px`;
+                modal.style.top = `${Math.max(0, Math.min(window.innerHeight - modal.offsetHeight, y))}px`;
             }
-          } else {
-            li.style.display = 'none';
-          }
+            if (isResizing) {
+                let newW = Math.max(320, resizeStart.width + (e.clientX - resizeStart.mouseX));
+                let newH = Math.max(320, resizeStart.height + (e.clientY - resizeStart.mouseY));
+                modal.style.width = `${newW}px`;
+                modal.style.height = `${newH}px`;
+            }
         });
-        const category = ul.closest('.command-category');
-        if (category) {
-          category.style.display = hasVisible ? '' : 'none';
-        }
-      });
-    });
-  }
+    };
 
-    loginButtons.forEach(btn => {
-        btn.addEventListener('click', twitchLogin);
+    const stopActions = () => {
+        isDragging = false;
+        isResizing = false;
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', stopActions);
+    };
+
+    dragbar.addEventListener('mousedown', e => {
+        isDragging = true;
+        const rect = modal.getBoundingClientRect();
+        dragOffsetX = e.clientX - rect.left;
+        dragOffsetY = e.clientY - rect.top;
+        document.body.style.userSelect = 'none';
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', stopActions);
     });
 
+    const resizeHandle = document.getElementById('twitchChatModalResizeCorner');
+    if(resizeHandle) {
+        resizeHandle.addEventListener('mousedown', e => {
+            isResizing = true;
+            resizeStart = { mouseX: e.clientX, mouseY: e.clientY, width: modal.offsetWidth, height: modal.offsetHeight };
+            document.body.style.userSelect = 'none';
+            e.preventDefault();
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', stopActions);
+        });
+    }
+
+    document.addEventListener('keydown', e => { if (chatOpen && e.key === 'Escape') hideChat(); });
+    loginButtons.forEach(btn => btn.addEventListener('click', twitchLogin));
     sendForms.forEach(form => {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', e => {
             e.preventDefault();
             const input = form.querySelector('.chat-input');
             const message = input.value.trim();
             const channel = getCurrentChannelName();
-
             if (message && tmiClient && tmiClient.readyState() === 'OPEN') {
                 tmiClient.say(channel, message);
                 input.value = '';
+            }
+        });
+    });
+
+    document.querySelectorAll('.emote-menu-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const menu = btn.nextElementSibling;
+            const isOpen = menu.classList.contains('open');
+            document.querySelectorAll('.emote-menu').forEach(m => m.classList.remove('open'));
+            if (!isOpen) {
+                menu.classList.add('open');
+                const activeTab = menu.querySelector('.emote-tab.active');
+                if (activeTab) {
+                    populateEmoteMenu(menu, activeTab.dataset.provider);
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.emote-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            const menu = tab.closest('.emote-menu');
+            menu.querySelectorAll('.emote-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            populateEmoteMenu(menu, tab.dataset.provider);
+        });
+    });
+
+    function populateEmoteMenu(menu, provider) {
+        const container = menu.querySelector('.emote-container');
+        container.innerHTML = '';
+        const emotes = activeThirdPartyEmotes[provider];
+        if (!emotes || emotes.size === 0) {
+            container.textContent = 'Смайлики не найдены.';
+            return;
+        }
+        emotes.forEach((url, name) => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = name;
+            img.title = name;
+            img.className = 'emote-item';
+            img.onclick = () => {
+                const form = menu.closest('form');
+                const input = form.querySelector('.chat-input');
+                input.value += (input.value ? ' ' : '') + name + ' ';
+                input.focus();
+            };
+            container.appendChild(img);
+        });
+    }
+
+    document.addEventListener('click', (e) => {
+        document.querySelectorAll('.emote-menu-wrapper').forEach(wrapper => {
+            if (!wrapper.contains(e.target)) {
+                wrapper.querySelector('.emote-menu').classList.remove('open');
             }
         });
     });
@@ -700,84 +624,40 @@ const commandsPanel = document.getElementById('commandsPanel');
 let commandsOpen = false;
 
 function toggleCommandsPanel() {
-  if (commandsOpen) {
-    commandsPanel.classList.remove('open');
-    commandsOpen = false;
-    openCommandsBtn.innerHTML = '📜CUMанды💦';
-  } else {
-    commandsPanel.classList.add('open');
-    commandsOpen = true;
-    openCommandsBtn.innerHTML = '✖ Спрятать';
-  }
+    commandsOpen = !commandsOpen;
+    commandsPanel.classList.toggle('open');
+    openCommandsBtn.innerHTML = commandsOpen ? '✖ Спрятать' : '📜CUMанды💦';
 }
 
-if (openCommandsBtn) {
-    openCommandsBtn.addEventListener('click', toggleCommandsPanel);
-}
-
-document.addEventListener('click', (e) => {
-    if (commandsPanel && openCommandsBtn) {
-        if (commandsOpen && !commandsPanel.contains(e.target) && !openCommandsBtn.contains(e.target)) {
-            toggleCommandsPanel();
-        }
+if (openCommandsBtn) openCommandsBtn.addEventListener('click', toggleCommandsPanel);
+document.addEventListener('click', e => {
+    if (commandsOpen && commandsPanel && openCommandsBtn && !commandsPanel.contains(e.target) && !openCommandsBtn.contains(e.target)) {
+        toggleCommandsPanel();
     }
 });
-
-document.addEventListener('keydown', (e) => {
-  if (commandsOpen && e.key === 'Escape') {
-    toggleCommandsPanel();
-  }
-});
+document.addEventListener('keydown', e => { if (commandsOpen && e.key === 'Escape') toggleCommandsPanel(); });
 
 function copyToClipboard(text) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(function() {
-      showCopyNotification();
-    }).catch(function(err) {
-      console.error('Ошибка копирования:', err);
-    });
-  } else {
-    try {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-      showCopyNotification();
-    } catch (err) {
-      console.error('Ошибка копирования (fallback):', err);
-    }
-  }
+    navigator.clipboard.writeText(text).then(showCopyNotification);
 }
 
 function showCopyNotification() {
-  let notif = document.getElementById('copyNotif');
-  if (!notif) {
-    notif = document.createElement('div');
-    notif.id = 'copyNotif';
-    notif.style.position = 'fixed';
-    notif.style.left = '50%';
-    notif.style.bottom = '100px';
-    notif.style.transform = 'translateX(-50%)';
-    notif.style.background = '#ffff00';
-    notif.style.color = '#a100a1';
-    notif.style.border = '2px solid #ff00ff';
-    notif.style.borderRadius = '18px';
-    notif.style.padding = '16px 36px';
-    notif.style.fontSize = '1.3rem';
-    notif.style.fontFamily = "'Comic Sans MS', cursive";
-    notif.style.boxShadow = '0 2px 16px #ff00ff44';
-    notif.style.zIndex = '9999';
-    notif.style.opacity = '0';
-    notif.style.transition = 'opacity 0.3s';
-    notif.textContent = 'ГОЙЙЙДА!';
-    document.body.appendChild(notif);
-  }
-  notif.style.opacity = '1';
-  setTimeout(function() {
-    notif.style.opacity = '0';
-  }, 1200);
+    let notif = document.getElementById('copyNotif');
+    if (!notif) {
+        notif = document.createElement('div');
+        notif.id = 'copyNotif';
+        Object.assign(notif.style, {
+            position: 'fixed', left: '50%', bottom: '100px', transform: 'translateX(-50%)',
+            background: '#ffff00', color: '#a100a1', border: '2px solid #ff00ff',
+            borderRadius: '18px', padding: '16px 36px', fontSize: '1.3rem',
+            fontFamily: "'Comic Sans MS', cursive", boxShadow: '0 2px 16px #ff00ff44',
+            zIndex: '9999', opacity: '0', transition: 'opacity 0.3s'
+        });
+        notif.textContent = 'ГОЙЙЙДА!';
+        document.body.appendChild(notif);
+    }
+    notif.style.opacity = '1';
+    setTimeout(() => notif.style.opacity = '0', 1200);
 }
 
 window.copyToClipboard = copyToClipboard;
