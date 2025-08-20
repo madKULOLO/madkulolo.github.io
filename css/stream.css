@@ -682,7 +682,7 @@ h2.suicide-theme {
     border-width: 4px;
     border-radius: 10px;
     margin: 8px auto 16px auto;
-    height: 300px !important;
+    height: 450px !important;
     min-height: 220px !important;
     max-height: 50vh !important;
   }
@@ -1221,4 +1221,5 @@ h2.suicide-theme {
 .suicide-theme .emote-tab.active {
   background: #a10000 !important;
   color: #fff !important;
+
 }
