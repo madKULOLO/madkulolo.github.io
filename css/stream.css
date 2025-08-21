@@ -694,7 +694,7 @@ h2.suicide-theme {
     border-width: 4px;
     border-radius: 10px;
     margin: 8px auto 16px auto;
-    height: 300px !important;
+    height: 450px !important;
     min-height: 220px !important;
     max-height: 50vh !important;
   }
@@ -1161,7 +1161,7 @@ h2.suicide-theme {
   position: absolute;
   bottom: 50px;
   left: 0;
-  width: 250px;
+  width: 300px;
   height: 350px;
   background: #fffbe9;
   border: 3px dashed #ff00ff;
