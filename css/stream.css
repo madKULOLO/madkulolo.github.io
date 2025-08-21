@@ -1179,7 +1179,7 @@ h2.suicide-theme {
 }
 .emote-tab {
   flex-grow: 1;
-  padding: 10px;
+  /* padding: 10px; */
   background: none;
   border: none;
   cursor: pointer;
@@ -1191,6 +1191,7 @@ h2.suicide-theme {
 .emote-tab.active {
   background: #ffff00;
   color: #ff00ff;
+  /* border-radius: 12px; */
 }
 .emote-container {
   flex-grow: 1;
@@ -1243,6 +1244,7 @@ h2.suicide-theme {
 .suicide-theme .emote-tab.active {
   background: #a10000 !important;
   color: #fff !important;
+  /* border-radius: 12px !important; */
 }
 .suicide-theme .emote-container {
     scrollbar-color: #a10000 #232323;
