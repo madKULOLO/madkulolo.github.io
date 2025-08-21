@@ -1,6 +1,15 @@
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
 html, body {
   overflow-y: auto !important;
   scrollbar-gutter: stable;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 html::-webkit-scrollbar, body::-webkit-scrollbar {
   width: 0 !important;
@@ -49,7 +58,6 @@ html, body {
   color: #a100a1;
   box-shadow: 0 2px 8px #ff00ff11;
   position: relative;
-  box-sizing: border-box;
 }
 .twitch-chat-modal-title-wrap {
   flex: 1 1 auto;
@@ -101,7 +109,6 @@ html, body {
   padding: 0;
   margin: 0;
   z-index: 10;
-  box-sizing: border-box;
 }
 .twitch-chat-modal-close:hover {
   color: #00ffea;
@@ -185,6 +192,9 @@ html, body {
   .twitch-chat-modal {
     display: none !important;
   }
+  .emote-menu-wrapper {
+    display: none !important;
+  }
 }
 .btn {
   font-size: 36px;
@@ -200,7 +210,6 @@ html, body {
   transition: all 0.3s ease;
   font-family: 'Comic Sans MS', cursive;
   max-width: 100%;
-  box-sizing: border-box;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -266,10 +275,7 @@ body {
   font-family: 'Comic Sans MS', cursive;
   background-color: #ffccff;
   color: #ff00ff;
-  margin: 0;
-  padding: 0;
   animation: loading 1s ease-out;
-  overflow-x: hidden;
   overscroll-behavior-x: contain;
 }
 
@@ -308,6 +314,7 @@ h1, h2 {
   color: #0000ff;
   font-family: 'Impact', fantasy;
   text-shadow: 2px 2px 5px #000000;
+  word-break: break-word;
 }
 
 h1:hover, h2:hover {
@@ -425,6 +432,7 @@ h2.suicide-theme {
 @media (max-width: 768px) {
   .container {
     padding: 20px;
+    margin: 20px auto;
   }
   h1 {
     font-size: 3rem;
@@ -439,10 +447,6 @@ h2.suicide-theme {
     padding: 12px 10px;
     margin: 8px 0;
     width: 100%;
-    min-width: 0;
-    max-width: 100%;
-    box-sizing: border-box;
-    display: block;
   }
   .btn-group {
     flex-direction: column;
@@ -450,15 +454,9 @@ h2.suicide-theme {
     margin-top: 20px;
     gap: 0;
   }
-  .btn-link {
-    font-size: 16px;
-    margin: 0 10px;
-    display: inline-block;
-  }
   .social-links a {
     font-size: 16px;
     margin: 0 10px;
-    display: inline-block;
   }
   .channel-switcher {
     right: 0;
@@ -467,33 +465,45 @@ h2.suicide-theme {
     transform: none;
   }
   .player-container, .player-container.suicide-theme {
-    aspect-ratio: 16/9;
-    min-height: 180px;
-  }
-  #playerTwitchEmbed, #playerTwitchEmbed iframe {
-    aspect-ratio: 16/9 !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 180px !important;
-    display: block;
+    margin: 20px auto;
   }
 }
 @media (max-width: 480px) {
+  .container {
+    width: 100%;
+    max-width: 100vw;
+    padding: 10px;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+  h1 {
+    font-size: 2.5rem !important;
+    letter-spacing: 2px !important;
+    margin-bottom: 0;
+  }
+  h2 {
+    font-size: 1.5rem !important;
+    margin-top: 10px;
+  }
+  .btn-group {
+      margin-top: 20px;
+  }
   .btn {
     font-size: 0.95rem;
     padding: 10px 6px;
     margin: 6px 0;
   }
-  .player-container, .player-container.suicide-theme {
-    aspect-ratio: 16/9;
-    min-height: 120px;
+  .player-container {
+    border-width: 10px;
+    margin: 15px auto;
+    border-radius: 10px;
   }
-  #playerTwitchEmbed, #playerTwitchEmbed iframe {
-    aspect-ratio: 16/9 !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 120px !important;
-    display: block;
+  .player-container.suicide-theme {
+      border-width: 2px !important;
+  }
+  .twitch-chat-iframe-wrap {
+      margin: 15px auto;
   }
   .emote-menu {
     left: 5px;
@@ -514,6 +524,9 @@ h2.suicide-theme {
 }
 
 @media (max-width: 360px) {
+    h1 { font-size: 2rem !important; letter-spacing: 1px !important; }
+    h2 { font-size: 1.2rem !important; }
+    .container { padding: 5px; }
     .emote-tab {
         font-size: 0.8rem;
         padding: 6px;
@@ -546,7 +559,6 @@ h2.suicide-theme {
     width: auto;
     min-width: 0;
     padding: 2px 4px;
-    box-sizing: border-box;
     border-radius: 7px;
   }
   .channel-switcher select {
@@ -682,7 +694,7 @@ h2.suicide-theme {
     border-width: 4px;
     border-radius: 10px;
     margin: 8px auto 16px auto;
-    height: 450px !important;
+    height: 300px !important;
     min-height: 220px !important;
     max-height: 50vh !important;
   }
@@ -934,7 +946,6 @@ h2.suicide-theme {
   padding: 10px;
   background: #fffbe9;
   font-family: 'Comic Sans MS', cursive;
-  box-sizing: border-box;
   word-wrap: break-word;
   scrollbar-width: thin;
   scrollbar-color: #ff00ff #ffff00;
@@ -1150,7 +1161,7 @@ h2.suicide-theme {
   position: absolute;
   bottom: 50px;
   left: 0;
-  width: 300px;
+  width: 250px;
   height: 350px;
   background: #fffbe9;
   border: 3px dashed #ff00ff;
@@ -1189,6 +1200,11 @@ h2.suicide-theme {
   flex-wrap: wrap;
   gap: 5px;
   align-content: flex-start;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.emote-container::-webkit-scrollbar {
+  display: none;
 }
 .emote-item {
   width: 32px;
@@ -1203,6 +1219,8 @@ h2.suicide-theme {
 .suicide-theme .emote-menu-btn {
   background: #232323 !important;
   border-color: #a10000 !important;
+  border-style: solid !important;
+  border-width: 2px !important;
 }
 .suicide-theme .emote-menu-btn:hover {
   border-color: #ffb0b0 !important;
@@ -1210,9 +1228,13 @@ h2.suicide-theme {
 .suicide-theme .emote-menu {
   background: #232323 !important;
   border-color: #a10000 !important;
+  border-style: solid !important;
+  border-width: 2px !important;
 }
 .suicide-theme .emote-menu-tabs {
   border-bottom-color: #a10000 !important;
+  border-bottom-style: solid !important;
+  border-bottom-width: 2px !important;
 }
 .suicide-theme .emote-tab {
   color: #b0b0b0 !important;
@@ -1221,5 +1243,13 @@ h2.suicide-theme {
 .suicide-theme .emote-tab.active {
   background: #a10000 !important;
   color: #fff !important;
-
+}
+.suicide-theme .emote-container {
+    scrollbar-color: #a10000 #232323;
+}
+.suicide-theme .emote-container::-webkit-scrollbar-track {
+    background: #232323;
+}
+.suicide-theme .emote-container::-webkit-scrollbar-thumb {
+    background-color: #a10000;
 }
