@@ -929,7 +929,7 @@ h2.suicide-theme {
 @media (max-width: 600px) {
   .open-commands-btn {
     font-size: 1rem;
-    padding: 8px 12px;
+    /* padding: 8px 12px; */
     bottom: 0px;
     border-radius: 10px;
     width: auto;
