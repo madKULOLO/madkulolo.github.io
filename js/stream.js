@@ -71,6 +71,7 @@ let activeThirdPartyEmotes = {
 let globalEmotesLoaded = false;
 
 async function fetchThirdPartyEmotes(channelId) {
+    
     if (!globalEmotesLoaded) {
         try {
             const response = await fetch('https://api.betterttv.net/3/cached/emotes/global');
@@ -111,6 +112,8 @@ async function fetchThirdPartyEmotes(channelId) {
     const bttvChannelEmotes = new Map();
     const ffzChannelEmotes = new Map();
     const sevenTvChannelEmotes = new Map();
+
+    const channelName = channels.find(ch => ch.id === channelId)?.name || 'madkulolo';
 
     try {
         const response = await fetch(`https://api.betterttv.net/3/cached/users/twitch/${channelId}`);
@@ -171,12 +174,33 @@ async function fetchThirdPartyEmotes(channelId) {
                     }
                 });
             }
+        } else {
+            const altResponse = await fetch(`https://7tv.io/v3/users/${channelName}`);
+            if (altResponse.ok) {
+                const altData = await altResponse.json();
+                if (altData && altData.emote_set && Array.isArray(altData.emote_set.emotes)) {
+                    altData.emote_set.emotes.forEach(e => {
+                        const url = `https://cdn.7tv.app/emote/${e.id}/1x.webp`;
+                        sevenTvChannelEmotes.set(e.name, url);
+                    });
+                }
+            }
         }
     } catch (e) {}
+    
+    sevenTvChannelEmotes.set('madkuWHO', 'https://cdn.7tv.app/emote/01J8PPGJ3G000D15QN0BDGM4PS/1x.webp');
     
     activeThirdPartyEmotes.bttv = new Map([...globalThirdPartyEmotes.bttv, ...bttvChannelEmotes]);
     activeThirdPartyEmotes.ffz = new Map([...globalThirdPartyEmotes.ffz, ...ffzChannelEmotes]);
     activeThirdPartyEmotes.sevenTv = new Map([...globalThirdPartyEmotes.sevenTv, ...sevenTvChannelEmotes]);
+    
+
+    const totalEmotes = activeThirdPartyEmotes.bttv.size + activeThirdPartyEmotes.ffz.size + activeThirdPartyEmotes.sevenTv.size;
+    if (totalEmotes === 0) {
+        activeThirdPartyEmotes.bttv.set('TestEmote1', 'https://cdn.betterttv.net/emote/54fa925e01e468494b85b54d/1x');
+        activeThirdPartyEmotes.bttv.set('TestEmote2', 'https://cdn.betterttv.net/emote/566ca04265dbbdab32ec054a/1x');
+        activeThirdPartyEmotes.bttv.set('TestEmote3', 'https://cdn.betterttv.net/emote/566ca38765dbbdab32ec055b/1x');
+    }
 }
 
 function parseThirdPartyEmotes(word) {
@@ -224,17 +248,304 @@ function logout() {
     updateUIForLoginState();
 }
 
+function populateEmoteMenu(menu, provider) {
+    const container = menu.querySelector('.emote-container');
+    container.innerHTML = '';
+    const emotes = activeThirdPartyEmotes[provider];
+    if (!emotes || emotes.size === 0) {
+        const noEmotesMsg = document.createElement('div');
+        noEmotesMsg.style.textAlign = 'center';
+        noEmotesMsg.style.padding = '20px';
+        noEmotesMsg.style.color = '#666';
+        noEmotesMsg.style.fontStyle = 'italic';
+        noEmotesMsg.textContent = 'Нет смайликов 😢';
+        container.appendChild(noEmotesMsg);
+        return;
+    }
+    emotes.forEach((url, name) => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = name;
+        img.title = name;
+        img.className = 'emote-item';
+        img.onclick = () => {
+            const form = menu.closest('form');
+            const input = form.querySelector('.chat-input');
+            
+            const emoteElement = document.createElement('img');
+            emoteElement.src = url;
+            emoteElement.alt = name;
+            emoteElement.className = 'emote-inline';
+            emoteElement.dataset.emoteName = name;
+            emoteElement.draggable = false;
+            
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && input.contains(selection.anchorNode)) {
+                const range = selection.getRangeAt(0);
+                
+                let needsSpaceBefore = false;
+                if (range.startContainer.nodeType === Node.TEXT_NODE) {
+                    const textBefore = range.startContainer.textContent.substring(0, range.startOffset);
+                    needsSpaceBefore = textBefore.length > 0 && !textBefore.endsWith(' ');
+                } else {
+                    let prevNode = range.startContainer.previousSibling;
+                    if (!prevNode && range.startContainer.parentNode !== input) {
+                        prevNode = range.startContainer.parentNode.previousSibling;
+                    }
+                    needsSpaceBefore = prevNode !== null;
+                }
+                
+                if (needsSpaceBefore) {
+                    const spaceNode = document.createTextNode(' ');
+                    range.insertNode(spaceNode);
+                    range.setStartAfter(spaceNode);
+                }
+                
+                range.insertNode(emoteElement);
+                
+                const spaceAfter = document.createTextNode(' ');
+                range.setStartAfter(emoteElement);
+                range.insertNode(spaceAfter);
+                
+                range.setStartAfter(spaceAfter);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                const needsSpaceBefore = input.childNodes.length > 0 && 
+                    (input.lastChild.nodeType === Node.ELEMENT_NODE || 
+                     (input.lastChild.nodeType === Node.TEXT_NODE && !input.lastChild.textContent.endsWith(' ')));
+                
+                if (needsSpaceBefore) {
+                    input.appendChild(document.createTextNode(' '));
+                }
+                
+                input.appendChild(emoteElement);
+                input.appendChild(document.createTextNode(' '));
+                
+                input.focus();
+                const range = document.createRange();
+                range.selectNodeContents(input);
+                range.collapse(false);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+            
+            input.classList.add('emote-added');
+            setTimeout(() => input.classList.remove('emote-added'), 300);
+        };
+
+        container.appendChild(img);
+    });
+}
+
+function populateMobileEmoteStrip(strip) {
+    strip.innerHTML = '';
+    
+    const allEmotes = new Map();
+    
+    activeThirdPartyEmotes.bttv.forEach((url, name) => allEmotes.set(name, url));
+    activeThirdPartyEmotes.ffz.forEach((url, name) => allEmotes.set(name, url));
+    activeThirdPartyEmotes.sevenTv.forEach((url, name) => allEmotes.set(name, url));
+    
+    if (allEmotes.size === 0) {
+        const noEmotesMsg = document.createElement('div');
+        noEmotesMsg.style.textAlign = 'center';
+        noEmotesMsg.style.padding = '20px';
+        noEmotesMsg.style.color = '#666';
+        noEmotesMsg.style.fontStyle = 'italic';
+        noEmotesMsg.textContent = 'Нет смайликов 😢';
+        strip.appendChild(noEmotesMsg);
+        return;
+    }
+    
+    allEmotes.forEach((url, name) => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = name;
+        img.title = name;
+        img.className = 'emote-item';
+        img.onclick = () => {
+            const controls = strip.closest('.custom-chat-controls');
+            if (!controls) return;
+            
+            const input = controls.querySelector('.chat-input');
+            if (!input) return;
+            
+            const emoteElement = document.createElement('img');
+            emoteElement.src = url;
+            emoteElement.alt = name;
+            emoteElement.className = 'emote-inline';
+            emoteElement.dataset.emoteName = name;
+            emoteElement.draggable = false;
+            
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && input.contains(selection.anchorNode)) {
+                const range = selection.getRangeAt(0);
+                
+                let needsSpaceBefore = false;
+                if (range.startContainer.nodeType === Node.TEXT_NODE) {
+                    const textBefore = range.startContainer.textContent.substring(0, range.startOffset);
+                    needsSpaceBefore = textBefore.length > 0 && !textBefore.endsWith(' ');
+                } else {
+                    let prevNode = range.startContainer.previousSibling;
+                    if (!prevNode && range.startContainer.parentNode !== input) {
+                        prevNode = range.startContainer.parentNode.previousSibling;
+                    }
+                    needsSpaceBefore = prevNode !== null;
+                }
+                
+                if (needsSpaceBefore) {
+                    const spaceNode = document.createTextNode(' ');
+                    range.insertNode(spaceNode);
+                    range.setStartAfter(spaceNode);
+                }
+                
+                range.insertNode(emoteElement);
+                
+                const spaceAfter = document.createTextNode(' ');
+                range.setStartAfter(emoteElement);
+                range.insertNode(spaceAfter);
+                
+                range.setStartAfter(spaceAfter);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                const needsSpaceBefore = input.childNodes.length > 0 && 
+                    (input.lastChild.nodeType === Node.ELEMENT_NODE || 
+                     (input.lastChild.nodeType === Node.TEXT_NODE && !input.lastChild.textContent.endsWith(' ')));
+                
+                if (needsSpaceBefore) {
+                    input.appendChild(document.createTextNode(' '));
+                }
+                
+                input.appendChild(emoteElement);
+                input.appendChild(document.createTextNode(' '));
+                
+                input.focus();
+                const range = document.createRange();
+                range.selectNodeContents(input);
+                range.collapse(false);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+            
+            input.classList.add('emote-added');
+            setTimeout(() => input.classList.remove('emote-added'), 300);
+        };
+        strip.appendChild(img);
+    });
+}
+
+function initializeEmoteMenus() {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        document.querySelectorAll('.emote-menu-btn').forEach((btn) => {
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                const controls = newBtn.closest('.custom-chat-controls');
+                if (!controls) return;
+                
+                let mobileStrip = controls.querySelector('.mobile-emote-strip');
+                
+                if (!mobileStrip) {
+                    mobileStrip = document.createElement('div');
+                    mobileStrip.className = 'mobile-emote-strip';
+                    mobileStrip.style.display = 'none';
+                    controls.appendChild(mobileStrip);
+                }
+                
+                const isOpen = mobileStrip.style.display === 'flex';
+                
+                document.querySelectorAll('.mobile-emote-strip').forEach(strip => {
+                    strip.style.display = 'none';
+                });
+                
+                if (!isOpen) {
+                    mobileStrip.style.display = 'flex';
+                    populateMobileEmoteStrip(mobileStrip);
+                } else {
+                    mobileStrip.style.display = 'none';
+                }
+            });
+        });
+    } else {
+        document.querySelectorAll('.emote-menu-btn').forEach((btn, index) => {
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                const menu = newBtn.nextElementSibling;
+                if (!menu || !menu.classList.contains('emote-menu')) return;
+                const isOpen = menu.classList.contains('open');
+                document.querySelectorAll('.emote-menu').forEach(m => {
+                    m.classList.remove('open');
+                });
+                if (!isOpen) {
+                    menu.classList.add('open');
+                    const activeTab = menu.querySelector('.emote-tab.active');
+                    if (activeTab) {
+                        populateEmoteMenu(menu, activeTab.dataset.provider);
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.emote-tab').forEach(tab => {
+            const newTab = tab.cloneNode(true);
+            tab.parentNode.replaceChild(newTab, tab);
+            
+            newTab.addEventListener('click', (e) => {
+                const menu = newTab.closest('.emote-menu');
+                menu.querySelectorAll('.emote-tab').forEach(t => t.classList.remove('active'));
+                newTab.classList.add('active');
+                populateEmoteMenu(menu, newTab.dataset.provider);
+            });
+        });
+    }
+    
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.emote-menu-wrapper') && !e.target.closest('.custom-chat-controls')) {
+            document.querySelectorAll('.emote-menu').forEach(m => m.classList.remove('open'));
+            document.querySelectorAll('.mobile-emote-strip').forEach(strip => {
+                strip.style.display = 'none';
+            });
+        }
+    });
+}
+
 function updateUIForLoginState() {
     const token = localStorage.getItem('twitch_access_token');
     if (token && userInfo.login) {
         document.querySelectorAll('.chat-login-wrapper').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.chat-send-form').forEach(el => el.style.display = 'flex');
+        setTimeout(() => initializeEmoteMenus(), 100);
     } else {
         document.querySelectorAll('.chat-login-wrapper').forEach(el => el.style.display = 'flex');
         document.querySelectorAll('.chat-send-form').forEach(el => el.style.display = 'none');
     }
     switchChannel(parseInt(select.value, 10));
 }
+
+window.addEventListener('resize', () => {
+    clearTimeout(window.emoteResizeTimeout);
+    window.emoteResizeTimeout = setTimeout(() => {
+        if (localStorage.getItem('twitch_access_token') && userInfo.login) {
+            initializeEmoteMenus();
+        }
+    }, 250);
+});
 
 function displayMessage(tags, message) {
     if (isFirstMessage) {
@@ -350,6 +661,11 @@ function setTheme(idx) {
         document.body.style.background = 'radial-gradient(circle at 60% 40%, #ffccff 0%, #ffff00 100%)';
         if(channelLabel) channelLabel.style.color = '#222';
     }
+    
+    const modal = document.getElementById('twitchChatModal');
+    if (modal && modal.classList.contains('open')) {
+        setModalTheme(idx);
+    }
 }
 
 function setContent(idx) {
@@ -438,6 +754,22 @@ function getCurrentChannelName() {
     return channels[parseInt(select.value, 10)].name;
 }
 
+function setModalTheme(idx) {
+    const modal = document.getElementById('twitchChatModal');
+    if (!modal) return;
+    const title = document.getElementById('twitchChatModalTitle');
+    const closeIcon = document.getElementById('twitchChatModalCloseIcon');
+    if (idx === 1) {
+        modal.classList.add('suicide-theme');
+        if (title) title.innerHTML = '💀 Писать или не писать?..';
+        if (closeIcon) closeIcon.innerHTML = '<svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#a10000" stroke="#ffb0b0" stroke-width="3"/><text x="14" y="19" text-anchor="middle" font-size="18" fill="#fff">×</text></svg>';
+    } else {
+        modal.classList.remove('suicide-theme');
+        if (title) title.innerHTML = '📌 Не забыть 🗣️💊';
+        if (closeIcon) closeIcon.innerHTML = '<svg width="28" height="28" viewBox="0 0 28 28"><rect x="3" y="3" width="22" height="22" rx="8" fill="#ffff00" stroke="#ff00ff" stroke-width="3"/><text x="14" y="19" text-anchor="middle" font-size="18" fill="#a100a1">×</text></svg>';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     let token = handleAuthRedirect() || localStorage.getItem('twitch_access_token');
     if (token) {
@@ -453,21 +785,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const closeModalBtn = document.getElementById('closeTwitchChatModal');
     const dragbar = document.getElementById('twitchChatModalDragbar');
     let chatOpen = false;
-
-    function setModalTheme(idx) {
-        if (!modal) return;
-        const title = document.getElementById('twitchChatModalTitle');
-        const closeIcon = document.getElementById('twitchChatModalCloseIcon');
-        if (idx === 1) {
-            modal.classList.add('suicide-theme');
-            if (title) title.innerHTML = '💀 Писать или не писать?..';
-            if (closeIcon) closeIcon.innerHTML = '<svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#a10000" stroke="#ffb0b0" stroke-width="3"/><text x="14" y="19" text-anchor="middle" font-size="18" fill="#fff">×</text></svg>';
-        } else {
-            modal.classList.remove('suicide-theme');
-            if (title) title.innerHTML = '📌 Не забыть 🗣️💊';
-            if (closeIcon) closeIcon.innerHTML = '<svg width="28" height="28" viewBox="0 0 28 28"><rect x="3" y="3" width="22" height="22" rx="8" fill="#ffff00" stroke="#ff00ff" stroke-width="3"/><text x="14" y="19" text-anchor="middle" font-size="18" fill="#a100a1">×</text></svg>';
-        }
-    }
 
     function showChat() {
         const idx = parseInt(select.value, 10);
@@ -549,66 +866,56 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.addEventListener('keydown', e => { if (chatOpen && e.key === 'Escape') hideChat(); });
     loginButtons.forEach(btn => btn.addEventListener('click', twitchLogin));
     sendForms.forEach(form => {
+        const input = form.querySelector('.chat-input');
+        
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                form.dispatchEvent(new Event('submit'));
+            }
+        });
+        
         form.addEventListener('submit', e => {
             e.preventDefault();
-            const input = form.querySelector('.chat-input');
-            const message = input.value.trim();
+            
+            let message = '';
+            const childNodes = Array.from(input.childNodes);
+            
+            childNodes.forEach((node, index) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    message += node.textContent;
+                } else if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('emote-inline')) {
+                    const emoteName = node.dataset.emoteName || node.alt;
+                    
+                    if (message && !message.endsWith(' ')) {
+                        message += ' ';
+                    }
+                    
+                    message += emoteName;
+                    
+                    if (index < childNodes.length - 1) {
+                        const nextNode = childNodes[index + 1];
+                        if (nextNode.nodeType === Node.ELEMENT_NODE || 
+                            (nextNode.nodeType === Node.TEXT_NODE && !nextNode.textContent.startsWith(' '))) {
+                            message += ' ';
+                        }
+                    } else {
+                        message += ' ';
+                    }
+                }
+            });
+            
+            message = message.trim();
             const channel = getCurrentChannelName();
+            
             if (message && tmiClient && tmiClient.readyState() === 'OPEN') {
                 tmiClient.say(channel, message);
-                input.value = '';
+                input.innerHTML = '';
             }
         });
     });
 
-    document.querySelectorAll('.emote-menu-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const menu = btn.nextElementSibling;
-            const isOpen = menu.classList.contains('open');
-            document.querySelectorAll('.emote-menu').forEach(m => m.classList.remove('open'));
-            if (!isOpen) {
-                menu.classList.add('open');
-                const activeTab = menu.querySelector('.emote-tab.active');
-                if (activeTab) {
-                    populateEmoteMenu(menu, activeTab.dataset.provider);
-                }
-            }
-        });
-    });
-
-    document.querySelectorAll('.emote-tab').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            const menu = tab.closest('.emote-menu');
-            menu.querySelectorAll('.emote-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            populateEmoteMenu(menu, tab.dataset.provider);
-        });
-    });
-
-    function populateEmoteMenu(menu, provider) {
-        const container = menu.querySelector('.emote-container');
-        container.innerHTML = '';
-        const emotes = activeThirdPartyEmotes[provider];
-        if (!emotes || emotes.size === 0) {
-            container.textContent = 'Смайлики не найдены.';
-            return;
-        }
-        emotes.forEach((url, name) => {
-            const img = document.createElement('img');
-            img.src = url;
-            img.alt = name;
-            img.title = name;
-            img.className = 'emote-item';
-            img.onclick = () => {
-                const form = menu.closest('form');
-                const input = form.querySelector('.chat-input');
-                input.value += (input.value ? ' ' : '') + name + ' ';
-                input.focus();
-            };
-            container.appendChild(img);
-        });
-    }
+    initializeEmoteMenus();
 
     document.addEventListener('click', (e) => {
         document.querySelectorAll('.emote-menu-wrapper').forEach(wrapper => {

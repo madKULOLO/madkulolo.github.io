@@ -55,7 +55,7 @@
                   <div class="emote-container"></div>
                 </div>
               </div>
-              <input type="text" class="chat-input" placeholder="Отправить сообщение..." autocomplete="off">
+              <div class="chat-input" contenteditable="true" data-placeholder="Отправить сообщение..." spellcheck="false"></div>
             </form>
           </div>
         </div>
@@ -69,7 +69,18 @@
           <button class="chat-login-btn">Войти через Twitch для общения</button>
         </div>
         <form class="chat-send-form" style="display: none;">
-          <input type="text" class="chat-input" placeholder="Отправить сообщение..." autocomplete="off">
+          <div class="emote-menu-wrapper">
+            <button type="button" class="emote-menu-btn">😀</button>
+            <div class="emote-menu">
+              <div class="emote-menu-tabs">
+                <button type="button" class="emote-tab active" data-provider="bttv">BTTV</button>
+                <button type="button" class="emote-tab" data-provider="sevenTv">7TV</button>
+                <button type="button" class="emote-tab" data-provider="ffz">FFZ</button>
+              </div>
+              <div class="emote-container"></div>
+            </div>
+          </div>
+          <div class="chat-input" contenteditable="true" data-placeholder="Отправить сообщение..." spellcheck="false"></div>
         </form>
       </div>
     </div>
