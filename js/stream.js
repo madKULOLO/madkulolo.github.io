@@ -188,7 +188,7 @@ async function fetchThirdPartyEmotes(channelId) {
         }
     } catch (e) {}
     
-    sevenTvChannelEmotes.set('madkuWHO', 'https://cdn.7tv.app/emote/01J8PPGJ3G000D15QN0BDGM4PS/1x.webp');
+    sevenTvChannelEmotes.set('HuuuuuuMad', 'https://cdn.7tv.app/emote/01J8PPGJ3G000D15QN0BDGM4PS/1x.webp');
     
     activeThirdPartyEmotes.bttv = new Map([...globalThirdPartyEmotes.bttv, ...bttvChannelEmotes]);
     activeThirdPartyEmotes.ffz = new Map([...globalThirdPartyEmotes.ffz, ...ffzChannelEmotes]);
