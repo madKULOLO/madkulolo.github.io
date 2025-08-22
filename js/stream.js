@@ -617,6 +617,116 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     });
+
+    const commandSearch = document.getElementById('commandSearch');
+    if (commandSearch) {
+        const easterEggs = {
+            'нигер': () => {
+                alert('Дед говорит: не шути так, а то бан прилетит!');
+            },
+            'яйцо': () => {
+                const egg = document.createElement('div');
+                egg.style.position = 'fixed';
+                egg.style.left = '50%';
+                egg.style.top = '50%';
+                egg.style.transform = 'translate(-50%, -50%)';
+                egg.style.zIndex = 99999;
+                egg.style.fontSize = '5em';
+                egg.style.background = '#fff';
+                egg.style.border = '8px solid #ff00ff';
+                egg.style.borderRadius = '50%';
+                egg.style.padding = '40px 60px';
+                egg.style.boxShadow = '0 0 40px #ff00ff';
+                egg.textContent = '🥚';
+                document.body.appendChild(egg);
+                setTimeout(() => egg.remove(), 2500);
+            },
+            'mrrmaikl': () => {
+                const msg = document.createElement('div');
+                msg.style.position = 'fixed';
+                msg.style.left = '50%';
+                msg.style.top = '50%';
+                msg.style.transform = 'translate(-50%, -50%)';
+                msg.style.zIndex = 99999;
+                msg.style.fontSize = '2.5em';
+                msg.style.background = '#ffff00';
+                msg.style.color = '#ff00ff';
+                msg.style.border = '8px double #00ff00';
+                msg.style.borderRadius = '30px';
+                msg.style.padding = '30px 40px';
+                msg.style.boxShadow = '0 0 40px #00ff00';
+                msg.innerHTML = '💖 MrrMaikl — ЛУЧШАЯ ЖЕНА ДЕДА! 💖';
+                document.body.appendChild(msg);
+                setTimeout(() => msg.remove(), 3000);
+            },
+            'alonerus': () => {
+                const img = document.createElement('img');
+                img.src = 'https://deduso.su/images/neko-8.jpg';
+                img.alt = 'neko';
+                img.style.position = 'fixed';
+                img.style.left = '50%';
+                img.style.top = '50%';
+                img.style.transform = 'translate(-50%, -50%)';
+                img.style.zIndex = 99999;
+                img.style.maxWidth = '60vw';
+                img.style.maxHeight = '60vh';
+                img.style.border = '8px solid #ff00ff';
+                img.style.borderRadius = '30px';
+                img.style.boxShadow = '0 0 40px #00ff00';
+                document.body.appendChild(img);
+                setTimeout(() => img.remove(), 3500);
+            },
+            'kessidi': () => {
+                const msg = document.createElement('div');
+                msg.style.position = 'fixed';
+                msg.style.left = '50%';
+                msg.style.top = '50%';
+                msg.style.transform = 'translate(-50%, -50%)';
+                msg.style.zIndex = 99999;
+                msg.style.fontSize = '2em';
+                msg.style.background = '#fff0f6';
+                msg.style.color = '#ff00ff';
+                msg.style.border = '6px dashed #ff00ff';
+                msg.style.borderRadius = '30px';
+                msg.style.padding = '30px 40px';
+                msg.style.boxShadow = '0 0 40px #ff00ff';
+                msg.innerHTML = '🦵<b>Kessidi</b>, дедовик ждёт твои ножки уже много лет... <br>Когда же деда дождётся? 😭🦵';
+                document.body.appendChild(msg);
+                setTimeout(() => msg.remove(), 4000);
+            }
+        };
+        commandSearch.addEventListener('input', function() {
+            const val = this.value.trim().toLowerCase();
+            if (easterEggs[val]) {
+                easterEggs[val]();
+            }
+            const shown = new Set();
+            document.querySelectorAll('.commands-list .command-list ul').forEach(function(ul) {
+                let hasVisible = false;
+                ul.querySelectorAll('li').forEach(function(li) {
+                    const cmdSpan = li.querySelector('.command');
+                    let key = '';
+                    if (cmdSpan) key = cmdSpan.textContent.trim().toLowerCase();
+                    const text = li.textContent.toLowerCase();
+                    if (!val || text.includes(val)) {
+                        if (!key || !shown.has(key)) {
+                            li.style.display = '';
+                            hasVisible = true;
+                            if (key) shown.add(key);
+                        } else {
+                            li.style.display = 'none';
+                        }
+                    } else {
+                        li.style.display = 'none';
+                    }
+                });
+                const category = ul.closest('.command-category');
+                if (category) {
+                    category.style.display = hasVisible ? '' : 'none';
+                }
+            });
+        });
+    }
 });
 
 const openCommandsBtn = document.getElementById('openCommandsBtn');
@@ -630,11 +740,13 @@ function toggleCommandsPanel() {
 }
 
 if (openCommandsBtn) openCommandsBtn.addEventListener('click', toggleCommandsPanel);
+
 document.addEventListener('click', e => {
     if (commandsOpen && commandsPanel && openCommandsBtn && !commandsPanel.contains(e.target) && !openCommandsBtn.contains(e.target)) {
         toggleCommandsPanel();
     }
 });
+
 document.addEventListener('keydown', e => { if (commandsOpen && e.key === 'Escape') toggleCommandsPanel(); });
 
 function copyToClipboard(text) {
