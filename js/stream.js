@@ -188,7 +188,7 @@ async function fetchThirdPartyEmotes(channelId) {
         }
     } catch (e) {}
     
-    sevenTvChannelEmotes.set('HuuuuuuMad', 'https://cdn.7tv.app/emote/01J8PPGJ3G000D15QN0BDGM4PS/1x.webp');
+    sevenTvChannelEmotes.set('madkuWHO', 'https://cdn.7tv.app/emote/01J8PPGJ3G000D15QN0BDGM4PS/1x.webp');
     
     activeThirdPartyEmotes.bttv = new Map([...globalThirdPartyEmotes.bttv, ...bttvChannelEmotes]);
     activeThirdPartyEmotes.ffz = new Map([...globalThirdPartyEmotes.ffz, ...ffzChannelEmotes]);
@@ -726,8 +726,70 @@ function setAnimations(idx) {
     }
 }
 
+function showChannelLoading(message) {
+    const loading = document.getElementById('loading');
+    if (loading) {
+        loading.style.display = 'flex';
+        loading.setAttribute('data-text', message.toUpperCase());
+        
+        if (message.includes('лезвие')) {
+            loading.style.background = '#000000';
+            loading.classList.add('knife-cut-loading');
+            createKnifeCutEffect();
+        } else {
+            loading.style.background = '#ff00ff';
+            loading.classList.remove('knife-cut-loading');
+        }
+    }
+}
+
+function createKnifeCutEffect() {
+    const loading = document.getElementById('loading');
+    if (!loading) return;
+    
+    const knifeSlash = document.createElement('div');
+    knifeSlash.className = 'knife-slash';
+    loading.appendChild(knifeSlash);
+    
+    const bloodDrip = document.createElement('div');
+    bloodDrip.className = 'blood-drip';
+    loading.appendChild(bloodDrip);
+    
+    const screenCrack = document.createElement('div');
+    screenCrack.className = 'screen-crack';
+    loading.appendChild(screenCrack);
+    
+    setTimeout(() => {
+        knifeSlash.classList.add('animate');
+        screenCrack.classList.add('animate');
+        setTimeout(() => {
+            bloodDrip.classList.add('animate');
+        }, 300);
+    }, 100);
+}
+
+function hideChannelLoading() {
+    const loading = document.getElementById('loading');
+    if (loading) {
+        setTimeout(() => {
+            loading.style.display = 'none';
+            loading.classList.remove('knife-cut-loading');
+            const knifeSlash = loading.querySelector('.knife-slash');
+            const bloodDrip = loading.querySelector('.blood-drip');
+            const screenCrack = loading.querySelector('.screen-crack');
+            if (knifeSlash) knifeSlash.remove();
+            if (bloodDrip) bloodDrip.remove();
+            if (screenCrack) screenCrack.remove();
+        }, 800);
+    }
+}
+
 async function switchChannel(idx) {
     const channel = channels[idx];
+    const loadingMessage = idx === 0 ? 'ой-ёй, ковыляю...' : 'достаём лезвие';
+    
+    showChannelLoading(loadingMessage);
+    
     await fetchThirdPartyEmotes(channel.id);
     connectToChat(channel.name);
     
@@ -746,6 +808,8 @@ async function switchChannel(idx) {
     setTheme(idx);
     setContent(idx);
     setAnimations(idx);
+    
+    hideChannelLoading();
 }
 
 select.addEventListener('change', () => switchChannel(parseInt(select.value, 10)));

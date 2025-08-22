@@ -286,15 +286,176 @@ html, body {
 
 body {
   font-family: 'Comic Sans MS', cursive;
-  background-color: #ffccff;
+  background: radial-gradient(circle at 60% 40%, #ffccff 0%, #ffff00 100%);
   color: #ff00ff;
   animation: loading 1s ease-out;
   overscroll-behavior-x: contain;
+  min-height: 100vh;
+}
+
+body.suicide-theme {
+  background: radial-gradient(ellipse at center, #232323 0%, #181818 100%) !important;
 }
 
 @keyframes loading {
   0% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ff00ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeOut 1.5s ease-in-out 2s forwards;
+  transition: background-color 0.3s ease;
+}
+
+#loading::before {
+  content: attr(data-text);
+  font-family: 'Impact', fantasy;
+  color: #00ff00;
+  font-size: 3rem;
+  text-shadow: 3px 3px 6px #0000ff;
+  animation: pulse 1.5s infinite;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; display: none; }
+}
+
+#loading.knife-cut-loading::before {
+  color: #a10000 !important;
+  text-shadow: 2px 2px 4px #000000, 0 0 15px #a10000, 0 0 30px #600000 !important;
+  font-family: 'Impact', fantasy !important;
+  animation: bloodPulse 1s ease-in-out infinite alternate !important;
+}
+
+@keyframes bloodPulse {
+  0% { 
+    transform: scale(1);
+    text-shadow: 2px 2px 4px #000000, 0 0 15px #a10000, 0 0 30px #600000;
+  }
+  100% { 
+    transform: scale(1.05);
+    text-shadow: 2px 2px 4px #000000, 0 0 25px #a10000, 0 0 50px #600000;
+  }
+}
+
+.knife-slash {
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #a10000 20%, #600000 50%, #a10000 80%, transparent 100%);
+  transform: rotate(-15deg) scaleX(0);
+  transform-origin: left center;
+  box-shadow: 0 0 10px #a10000;
+}
+
+.knife-slash.animate {
+  animation: slashCut 0.4s ease-out forwards;
+}
+
+@keyframes slashCut {
+  0% { transform: rotate(-15deg) scaleX(0); }
+  100% { transform: rotate(-15deg) scaleX(1); }
+}
+
+.blood-drip {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  width: 2px;
+  height: 0;
+  background: linear-gradient(180deg, #a10000 0%, #600000 50%, #300000 100%);
+  transform: translateX(-50%) rotate(-15deg);
+  box-shadow: 0 0 8px #a10000;
+}
+
+.blood-drip.animate {
+  animation: bloodFlow 1.2s ease-in forwards;
+}
+
+@keyframes bloodFlow {
+  0% { height: 0; }
+  50% { height: 60vh; }
+  100% { height: 100vh; }
+}
+
+.knife-slash::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: radial-gradient(ellipse, #ff4444 0%, #a10000 40%, transparent 70%);
+  opacity: 0;
+  animation: bloodGlow 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes bloodGlow {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.8; }
+}
+
+.screen-crack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.screen-crack.animate {
+  animation: crackAppear 0.6s ease-out forwards;
+}
+
+@keyframes crackAppear {
+  0% { opacity: 0; }
+  100% { opacity: 0.4; }
+}
+
+.screen-crack::before {
+  content: '';
+  position: absolute;
+  top: 18%;
+  left: 8%;
+  width: 84%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #333 10%, #666 50%, #333 90%, transparent 100%);
+  transform: rotate(-15deg);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.1), 0 -1px 0 rgba(0,0,0,0.3);
+}
+
+.screen-crack::after {
+  content: '';
+  position: absolute;
+  top: 19%;
+  left: 45%;
+  width: 1px;
+  height: 15%;
+  background: linear-gradient(180deg, transparent 0%, #333 20%, #666 50%, #333 80%, transparent 100%);
+  transform: rotate(-8deg);
+  box-shadow: 1px 0 0 rgba(255,255,255,0.1), -1px 0 0 rgba(0,0,0,0.3);
 }
 
 .container {
@@ -496,15 +657,27 @@ h2.suicide-theme {
   .container {
     width: 100%;
     max-width: 100vw;
-    padding: 10px;
+    padding: 15px 15px 80px 15px;
     margin: 0;
-    border: none;
-    border-radius: 0;
+    border: 2px dashed #00ff00;
+    border-radius: 15px;
+    animation: none;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+  }
+  .container.suicide-theme {
+    border: 2px dashed #a10000 !important;
+    border-radius: 15px !important;
+    padding: 15px 15px 80px 15px !important;
+    box-shadow: 0 0 15px rgba(161, 0, 0, 0.3) !important;
   }
   h1 {
     font-size: 2.5rem !important;
     letter-spacing: 2px !important;
     margin-bottom: 0;
+    animation: none !important;
+  }
+  h1.suicide-theme {
+    animation: none !important;
   }
   h2 {
     font-size: 1.5rem !important;
@@ -515,17 +688,20 @@ h2.suicide-theme {
   }
   .btn {
     font-size: 0.95rem;
-    padding: 10px 6px;
-    margin: 6px 0;
+    padding: 12px 8px;
+    margin: 8px 0;
     width: 100%;
-    max-width: 300px;
+    max-width: 280px;
+    border-radius: 25px;
+    border-width: 2px;
   }
   .btn.suicide-theme {
     width: auto !important;
-    max-width: 250px !important;
-    margin: 6px 2px !important;
-    padding: 8px 12px !important;
+    max-width: 240px !important;
+    margin: 8px 3px !important;
+    padding: 10px 14px !important;
     font-size: 0.9rem !important;
+    border-radius: 15px !important;
   }
   .btn-group {
     flex-direction: column;
@@ -539,12 +715,14 @@ h2.suicide-theme {
     flex-wrap: wrap !important;
   }
   .player-container {
-    border-width: 10px;
+    border-width: 6px;
     margin: 15px auto;
-    border-radius: 10px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
   }
   .player-container.suicide-theme {
-      border-width: 2px !important;
+    border-width: 3px !important;
+    box-shadow: 0 0 10px rgba(161, 0, 0, 0.4) !important;
   }
   .twitch-chat-iframe-wrap {
       margin: 15px auto;
@@ -577,9 +755,30 @@ h2.suicide-theme {
 }
 
 @media (max-width: 360px) {
-    h1 { font-size: 2rem !important; letter-spacing: 1px !important; }
-    h2 { font-size: 1.2rem !important; }
-    .container { padding: 5px; }
+    h1 { font-size: 1.8rem !important; letter-spacing: 1px !important; }
+    h2 { font-size: 1.1rem !important; }
+    .container { 
+        padding: 12px 12px 80px 12px;
+        border-width: 1.5px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(255, 0, 255, 0.25);
+    }
+    .container.suicide-theme {
+        box-shadow: 0 0 10px rgba(161, 0, 0, 0.25) !important;
+    }
+    .btn {
+        font-size: 0.85rem;
+        padding: 10px 6px;
+        margin: 6px 0;
+        max-width: 260px;
+        border-radius: 20px;
+    }
+    .btn.suicide-theme {
+        max-width: 220px !important;
+        margin: 6px 2px !important;
+        padding: 8px 10px !important;
+        font-size: 0.8rem !important;
+    }
     .emote-tab {
         font-size: 0.8rem;
         padding: 6px;
@@ -624,6 +823,18 @@ h2.suicide-theme {
   font-size: 0.98rem;
 }
 @media (max-width: 600px) {
+  #loading::before {
+    font-size: 1.5rem;
+    padding: 0 10px;
+    word-break: break-word;
+    text-align: center;
+    max-width: 90vw;
+    box-sizing: border-box;
+  }
+  #loading {
+    font-size: 14px;
+    padding: 0 10px;
+  }
   .channel-switcher {
     top: 6px;
     right: 6px;
@@ -844,6 +1055,7 @@ h2.suicide-theme {
 }
 .commands-panel ul {
   padding-left: 1.2em;
+  list-style-type: none;
 }
 .commands-panel .command {
   background: linear-gradient(90deg, #ffccff 0%, #ffff00 100%);
@@ -880,6 +1092,7 @@ h2.suicide-theme {
 .commands-panel ul {
   padding-left: 0.5em;
   margin-bottom: 0.7em;
+  list-style-type: none;
 }
 .commands-panel li {
   margin-bottom: 0.3em;
@@ -1001,12 +1214,12 @@ h2.suicide-theme {
 @media (max-width: 600px) {
   .open-commands-btn {
     font-size: 1rem;
-
-    bottom: 0px;
+    bottom: 10px;
     border-radius: 10px;
     width: auto;
     max-width: 90vw;
     min-width: 36px;
+    padding: 10px 16px;
   }
 }
 
@@ -1336,7 +1549,7 @@ h2.suicide-theme {
   font-family: 'Comic Sans MS', cursive;
   font-weight: bold;
   color: #a100a1;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 .emote-tab.active {
   background: #ffff00;
@@ -1351,15 +1564,23 @@ h2.suicide-theme {
   flex-wrap: wrap;
   gap: 5px;
   align-content: flex-start;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: #ff00ff #ffff00;
 }
 .emote-container::-webkit-scrollbar {
-  display: none;
+  width: 8px;
+}
+.emote-container::-webkit-scrollbar-track {
+  background: #ffff00;
+}
+.emote-container::-webkit-scrollbar-thumb {
+  background-color: #ff00ff;
+  border-radius: 6px;
+  border: 1px solid #ffff00;
 }
 .emote-item {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
   transition: transform 0.1s;
 }
@@ -1404,6 +1625,7 @@ h2.suicide-theme {
 }
 .suicide-theme .emote-container::-webkit-scrollbar-thumb {
     background-color: #a10000;
+    border: 1px solid #232323;
 }
 
 
@@ -1439,13 +1661,13 @@ h2.suicide-theme {
     bottom: 60px;
     left: 10px;
     right: 10px;
-    height: 70px;
+    height: 60px;
     background: #fffbe9;
     border: 2px solid #ff00ff;
     border-radius: 12px;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 8px;
+    padding: 6px;
     gap: 6px;
     align-items: center;
     z-index: 1000;
@@ -1464,8 +1686,8 @@ h2.suicide-theme {
   }
   
   .mobile-emote-strip .emote-item {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
     cursor: pointer;
     transition: transform 0.1s;
