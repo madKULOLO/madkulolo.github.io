@@ -648,6 +648,14 @@ function connectToChat(channelName) {
     });
 }
 
+function updateEmoteButtonIcons(idx) {
+    const emoteButtons = document.querySelectorAll('.emote-menu-btn');
+    const icon = idx === 1 ? '🩸' : '😀';
+    emoteButtons.forEach(btn => {
+        btn.textContent = icon;
+    });
+}
+
 function setTheme(idx) {
     const elementsToTheme = [document.body, container, h1, h2, btnGroup, socialLinks, playerContainer, channelSwitcher, document.getElementById('twitchChatModal'), document.getElementById('twitchChatBlock')];
     const channelLabel = document.getElementById('channelLabel');
@@ -661,6 +669,8 @@ function setTheme(idx) {
         document.body.style.background = 'radial-gradient(circle at 60% 40%, #ffccff 0%, #ffff00 100%)';
         if(channelLabel) channelLabel.style.color = '#222';
     }
+    
+    updateEmoteButtonIcons(idx);
     
     const modal = document.getElementById('twitchChatModal');
     if (modal && modal.classList.contains('open')) {
