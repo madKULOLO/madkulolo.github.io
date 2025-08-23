@@ -665,7 +665,7 @@ h2.suicide-theme {
     box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
   }
   .container.suicide-theme {
-    border: 2px dashed #a10000 !important;
+    border: 2px solid #a10000 !important;
     border-radius: 15px !important;
     padding: 15px 15px 80px 15px !important;
     box-shadow: 0 0 15px rgba(161, 0, 0, 0.3) !important;
