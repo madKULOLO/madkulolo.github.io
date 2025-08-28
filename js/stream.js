@@ -807,7 +807,7 @@ async function switchChannel(idx) {
     if (embedDiv) {
         embedDiv.innerHTML = '';
         const iframe = document.createElement('iframe');
-        iframe.src = idx === 0 ? 'https://stream.deduso.su/0cd70214-4b93-45ef-a673-b66fab86a296.html' : 'https://stream.deduso.su/9f3dda91-feed-452d-aec7-9171d404109e.html';
+        iframe.src = idx === 0 ? 'https://stream.deduso.su/b4f30518-04f7-4a78-a3a3-5ce0b836a160.html' : 'https://stream.deduso.su/9f3dda91-feed-452d-aec7-9171d404109e.html';
         iframe.frameborder = '0';
         iframe.allowfullscreen = 'true';
         iframe.scrolling = 'no';
@@ -1152,5 +1152,6 @@ function showCopyNotification() {
     notif.style.opacity = '1';
     setTimeout(() => notif.style.opacity = '0', 1200);
 }
+
 
 window.copyToClipboard = copyToClipboard;
