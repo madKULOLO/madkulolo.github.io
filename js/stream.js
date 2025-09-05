@@ -939,53 +939,59 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.addEventListener('keydown', e => { if (chatOpen && e.key === 'Escape') hideChat(); });
     loginButtons.forEach(btn => btn.addEventListener('click', twitchLogin));
+    function handleFormSubmit(e, form, input) {
+        e.preventDefault();
+        
+        let message = '';
+        const childNodes = Array.from(input.childNodes);
+        
+        childNodes.forEach((node, index) => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                message += node.textContent;
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('emote-inline')) {
+                const emoteName = node.dataset.emoteName || node.alt;
+                
+                if (message && !message.endsWith(' ')) {
+                    message += ' ';
+                }
+                
+                message += emoteName;
+                
+                if (index < childNodes.length - 1) {
+                    const nextNode = childNodes[index + 1];
+                    if (nextNode.nodeType === Node.ELEMENT_NODE || 
+                        (nextNode.nodeType === Node.TEXT_NODE && !nextNode.textContent.startsWith(' '))) {
+                        message += ' ';
+                    }
+                } else {
+                    message += ' ';
+                }
+            }
+        });
+        
+        message = message.trim();
+        const channel = getCurrentChannelName();
+        
+        if (message && tmiClient && tmiClient.readyState() === 'OPEN') {
+            tmiClient.say(channel, message);
+            input.innerHTML = '';
+        }
+    }
+
     sendForms.forEach(form => {
         const input = form.querySelector('.chat-input');
         
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                form.dispatchEvent(new Event('submit'));
+                const submitEvent = { preventDefault: () => {} };
+                handleFormSubmit(submitEvent, form, input);
             }
         });
         
         form.addEventListener('submit', e => {
             e.preventDefault();
-            
-            let message = '';
-            const childNodes = Array.from(input.childNodes);
-            
-            childNodes.forEach((node, index) => {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    message += node.textContent;
-                } else if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('emote-inline')) {
-                    const emoteName = node.dataset.emoteName || node.alt;
-                    
-                    if (message && !message.endsWith(' ')) {
-                        message += ' ';
-                    }
-                    
-                    message += emoteName;
-                    
-                    if (index < childNodes.length - 1) {
-                        const nextNode = childNodes[index + 1];
-                        if (nextNode.nodeType === Node.ELEMENT_NODE || 
-                            (nextNode.nodeType === Node.TEXT_NODE && !nextNode.textContent.startsWith(' '))) {
-                            message += ' ';
-                        }
-                    } else {
-                        message += ' ';
-                    }
-                }
-            });
-            
-            message = message.trim();
-            const channel = getCurrentChannelName();
-            
-            if (message && tmiClient && tmiClient.readyState() === 'OPEN') {
-                tmiClient.say(channel, message);
-                input.innerHTML = '';
-            }
+            handleFormSubmit(e, form, input);
         });
     });
 
