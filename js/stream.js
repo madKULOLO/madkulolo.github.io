@@ -44,7 +44,7 @@ const socialLinks = document.getElementById('socialLinks');
 const playerContainer = document.getElementById('playerContainer');
 const channelSwitcher = document.getElementById('channelSwitcher');
 
-const CLIENT_ID = "TWITCH_CLIENT_ID_2_PLACEHOLDER"; 
+const CLIENT_ID = '5ivtmm2oqik8tq57qxbxkl2nwju1ew'; 
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 
 let tmiClient = null;
