@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
             msg.style.borderRadius = '30px';
             msg.style.padding = '30px 40px';
             msg.style.boxShadow = '0 0 40px #ff00ff';
-            msg.innerHTML = '🦵<b>Kessidi</b>, дедовик ждёт твои ножки уже много лет... <br>Когда же деда дождётся? 😭🦵';
+            msg.innerHTML = '🦵<b>Kessidi</b>, дедуля ждёт твои ножки уже много лет... <br>Когда же деда дождётся? 😭🦵';
             document.body.appendChild(msg);
             setTimeout(() => msg.remove(), 4000);
         }
@@ -317,7 +317,7 @@ function insertDedMarquee() {
 document.addEventListener('DOMContentLoaded', insertDedMarquee);
 function insertFooter() {
     const footerContent = `
-        <p>© 1994 madKULOLO. Все права МОИ, потому что Я — ДЕДовик.</p>
+        <p>© 1994 madKULOLO. Все права МОИ, потому что Я — ДЕДушка.</p>
         <p>Сделано ДЛЯ СЕБЯ, потому что Я заСЛУЖИЛ.</p>
         <p>Деньги идут МНЕ, потому что Я ЛУЧШИЙ. Спасибо, и ничего не обещаю, ибо ДЕМЕНЦИЯ!</p>
         <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
